@@ -6,33 +6,105 @@
 
 #include "TArvoreSintatica.h"
 
+#include <iostream>
+
 // ------------------------------------------------------------------------------------------------
 
 class TParser
 {
+private:
+    struct TOcorrenciaCaractere { char ch; size_t pos; };
+
+    struct TToken
+    {
+        std::string token;
+
+        TToken* anterior;
+        TToken* seguinte;
+    };
+
 public:
     TParser() = default;
 
-    TNoh* Parse(const std::string& expr)
+    TNoh* Parse(std::string expr)
     {
         TNoh* noh = nullptr;
 
-        _expr = expr;
-
-        Normaliza(_expr);
-        if (ExpressaoValida(_expr))
+        Normaliza(expr);
+        if (ExpressaoValida(expr))
         {
-            noh = new TNohConstante { 0.0 };
-        }
+            noh = new TNohLiteral;
 
-        _expr = "";
+            TToken* tokenCorrente = nullptr;
+
+            std::string numeroCorrente = "";
+
+            for (int i = 0; i < expr.length(); i++)
+            {
+                const char ch = expr[i];
+                if (EhCaractereNumerico(ch))
+                {
+                    numeroCorrente += ch;
+                }
+                else
+                {
+                    if (numeroCorrente != "")
+                    {
+                        auto novoToken = new TToken { numeroCorrente, tokenCorrente, nullptr };
+                        if (tokenCorrente)
+                        {
+                            tokenCorrente->seguinte = novoToken;
+                        }
+                        tokenCorrente = novoToken;
+
+                        numeroCorrente = "";
+                    }
+
+                    std::string strToken;
+                    strToken += ch;
+
+                    auto novoToken = new TToken { strToken, tokenCorrente, nullptr };
+                    if (tokenCorrente)
+                    {
+                        tokenCorrente->seguinte = novoToken;
+                    }
+                    tokenCorrente = novoToken;
+                }
+            }
+
+            if (numeroCorrente != "")
+            {
+                auto novoToken = new TToken { numeroCorrente, tokenCorrente, nullptr };
+                if (tokenCorrente)
+                {
+                    tokenCorrente->seguinte = novoToken;
+                }
+                tokenCorrente = novoToken;
+
+                numeroCorrente = "";
+            }
+
+            TToken* seguinte = nullptr;
+            while (tokenCorrente)
+            {
+                seguinte = tokenCorrente;
+                tokenCorrente = tokenCorrente->anterior;
+            }
+            tokenCorrente = seguinte;
+
+            std::cout << "tokens: ";
+            while (tokenCorrente)
+            {
+                std::cout << "\"" << tokenCorrente->token << "\" ";
+                tokenCorrente = tokenCorrente->seguinte;
+            }
+            std::cout << "\n";
+        }
 
         return noh;
     }
     
 private:
-    struct TOcorrenciaCaractere { char ch; size_t pos; };
-
     void Normaliza(std::string& str) const
     {
         RemoveEspacos(str);
@@ -108,7 +180,7 @@ private:
 
             for (int i = aberturas.size() - 1; i >= 0; i--)
             {
-                for (int j = 0; i < fechamentos.size(); j++)
+                for (int j = 0; j < fechamentos.size(); j++)
                 {
                     if (fechamentos[j].pos > aberturas[i].pos)
                     {
@@ -127,6 +199,20 @@ private:
     bool EhCaractereValido(char ch) const
     {
         constexpr const char* caracteresValidos = "fxsct()+-*/^.0123456789";
+
+        for (int i = 0; caracteresValidos[i] != '\0'; i++)
+        {
+            if (ch == caracteresValidos[i])
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+    bool EhCaractereNumerico(char ch) const
+    {
+        constexpr const char* caracteresValidos = ".0123456789";
 
         for (int i = 0; caracteresValidos[i] != '\0'; i++)
         {
