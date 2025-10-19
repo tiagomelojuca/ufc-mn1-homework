@@ -23,11 +23,11 @@ namespace FuncoesMatematicas
         float resultado = Sentinela();
 
         TParser parser;
-        TArvoreSintatica* arvore = parser.Parse(expr);
-        if (arvore != nullptr)
+        TNoh* raiz = parser.Parse(expr);
+        if (raiz != nullptr)
         {
-            resultado = arvore->Resolve(x);
-            delete arvore;
+            TArvoreSintatica arvore(raiz);
+            resultado = arvore.Resolve(x);
         }
 
         return resultado;
