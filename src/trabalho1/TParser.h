@@ -1,11 +1,328 @@
 #ifndef TPARSER_H_
 #define TPARSER_H_
 
+#include <unordered_map>
+
 #include "IParser.h"
 #include "TArvoreSintatica.h"
 
 // ------------------------------------------------------------------------------------------------
 
+class TLexer
+{
+public:
+    constexpr static const char* CARACTERES_ALFABETICOS_MINUSCULOS = "abcdefghijklmnopqrstuvwxyz";
+    constexpr static const char* CARACTERES_ALFABETICOS_MAIUSCULOS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    constexpr static const char* CARACTERES_NUMERICOS = "0123456789.,";
+    constexpr static const char* CARACTERES_SIMBOLICOS = "+-*/^()=";
+
+    enum class EToken
+    {
+        NUMERO, IDENTIFICADOR, OPERADOR, ABERTURA_SUBEXPR, FECHAMENTO_SUBEXPR, IGUAL, FIM
+    };
+    static const EToken TOKEN_INVALIDO = static_cast<EToken>(-1);
+
+    class TToken {
+    public:
+        TToken() = default;
+
+        TToken(EToken tipoToken, const std::string& conteudo, size_t posicao)
+            : _tipo(tipoToken), _valor(conteudo), _posicao(posicao) {}
+
+        bool Valido() const
+        {
+            return _tipo != TOKEN_INVALIDO;
+        }
+
+        EToken Tipo() const
+        {
+            return _tipo;
+        }
+
+        std::string ToString() const
+        {
+            std::string str;
+
+            str += "{ ";
+            str += "EToken::";
+
+            if (_tipo == EToken::NUMERO) {
+                str += "NUMERO";
+            }
+            else if (_tipo == EToken::IDENTIFICADOR) {
+                str += "IDENTIFICADOR";
+            }
+            else if (_tipo == EToken::OPERADOR) {
+                str += "OPERADOR";
+            }
+            else if (_tipo == EToken::ABERTURA_SUBEXPR) {
+                str += "ABERTURA_SUBEXPR";
+            }
+            else if (_tipo == EToken::FECHAMENTO_SUBEXPR) {
+                str += "FECHAMENTO_SUBEXPR";
+            }
+            else if (_tipo == EToken::IGUAL) {
+                str += "IGUAL";
+            }
+            else if (_tipo == EToken::FIM) {
+                str += "FIM";
+            }
+            else {
+                str += "TOKEN_INVALIDO";
+            }
+
+            str += ", \"";
+            str += _valor;
+            str += "\", ";
+            str += std::to_string(_posicao);
+            str += " }";
+
+            return str;
+        }
+
+    private:
+        EToken _tipo = TOKEN_INVALIDO;
+        std::string _valor;
+        size_t _posicao = 0;
+    };
+
+    TLexer(const std::string& expr) : _expr(expr) {}
+
+    TToken ProcessaProximo()
+    {
+        AvancaEspacos();
+
+        const char chCorrente = Corrente();
+
+        if (chCorrente == '\0')
+        {
+            return ProcessaFim();
+        }
+
+        if (EhCaractereNumerico(chCorrente))
+        {
+            return ProcessaNumero();
+        }
+
+        if (EhCaractereAlfabetico(chCorrente))
+        {
+            return ProcessaIdentificador();
+        }
+
+        if (EhCaractereSimbolico(chCorrente))
+        {
+            return ProcessaSimbolo();
+        }
+
+        return TToken {};
+    }
+
+private:
+    TToken ProcessaFim()
+    {
+        return { EToken::FIM, "", _posicao };
+    }
+
+    TToken ProcessaNumero()
+    {
+        const size_t posicao = _posicao;
+
+        std::string numero;
+        while (EhCaractereNumerico(Corrente()))
+        {
+            numero += Corrente();
+            Avanca();
+        }
+
+        return TToken { EToken::NUMERO, numero, posicao };
+    }
+
+    TToken ProcessaIdentificador()
+    {
+        TToken token;
+
+        token = ProcessaPalavra("sin");
+        if (token.Valido()) {
+            return token;
+        }
+
+        token = ProcessaPalavra("sen");
+        if (token.Valido()) {
+            return token;
+        }
+
+        token = ProcessaPalavra("cos");
+        if (token.Valido()) {
+            return token;
+        }
+
+        token = ProcessaPalavra("pi");
+        if (token.Valido()) {
+            return token;
+        }
+
+        std::string conteudo;
+        conteudo += Corrente();
+        token = TToken { EToken::IDENTIFICADOR, conteudo, _posicao };
+        Avanca();
+
+        return token;
+    }
+
+    TToken ProcessaPalavra(const std::string& palavra)
+    {
+        bool ok = true;
+
+        for (size_t i = 0; i < palavra.length(); i++)
+        {
+            const char ch = Espia(i);
+            const char chLower = ToLower(ch);
+            const char chUpper = ToUpper(ch);
+
+            if (palavra[i] != chLower && palavra[i] != chUpper)
+            {
+                ok = false;
+                break;
+            }
+        }
+
+        if (!ok)
+        {
+            return TToken {};
+        }
+
+        const size_t posicao = _posicao;
+
+        for (size_t i = 0; i < palavra.length(); i++)
+        {
+            Avanca();
+        }
+
+        return { EToken::IDENTIFICADOR, palavra, posicao };
+    }
+
+    TToken ProcessaSimbolo()
+    {
+        const char ch = Corrente();
+
+        EToken tipoToken = EToken::OPERADOR;
+        if (ch == '(')
+        {
+            tipoToken = EToken::ABERTURA_SUBEXPR;
+        }
+        else if (ch == ')')
+        {
+            tipoToken = EToken::FECHAMENTO_SUBEXPR;
+        }
+        else if (ch == '=')
+        {
+            tipoToken = EToken::IGUAL;
+        }
+
+        std::string conteudo;
+        conteudo += ch;
+        TToken token { tipoToken, conteudo, _posicao };
+        Avanca();
+
+        return token;
+    }
+
+    void AvancaEspacos()
+    {
+        while (Corrente() == ' ')
+        {
+            Avanca();
+        }
+    }
+
+    void Avanca()
+    {
+        if (_posicao < _expr.length())
+        {
+            _posicao++;
+        }
+    }
+
+    char Consome()
+    {
+        const char ch = Corrente();
+        Avanca();
+        return ch;
+    }
+
+    char Anterior() const { return Caractere(_posicao - 1); }
+    char Corrente() const { return Caractere(_posicao); }
+    char Seguinte() const { return Caractere(_posicao + 1); }
+
+    char Espia(size_t offset) const // Peek
+    {
+        return Caractere(_posicao + offset);
+    }
+
+    char Caractere(size_t pos) const
+    {
+        return pos < _expr.length() ? _expr[pos] : '\0';
+    }
+
+    bool EhCaractereAlfabetico(char ch)
+    {
+        return StringContemCaractere(CARACTERES_ALFABETICOS_MINUSCULOS, ch) ||
+               StringContemCaractere(CARACTERES_ALFABETICOS_MAIUSCULOS, ch);
+    }
+    bool EhCaractereNumerico(char ch)
+    {
+        return StringContemCaractere(CARACTERES_NUMERICOS, ch);
+    }
+    bool EhCaractereSimbolico(char ch)
+    {
+        return StringContemCaractere(CARACTERES_SIMBOLICOS, ch);
+    }
+    bool StringContemCaractere(const char* str, char ch)
+    {
+        for (size_t i = 0; str[i] != '\0'; i++)
+        {
+            if (ch == str[i])
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    char ToLower(char ch)
+    {
+        return Transforma(
+            ch, CARACTERES_ALFABETICOS_MAIUSCULOS, CARACTERES_ALFABETICOS_MINUSCULOS
+        );
+    }
+
+    char ToUpper(char ch)
+    {
+        return Transforma(
+            ch, CARACTERES_ALFABETICOS_MINUSCULOS, CARACTERES_ALFABETICOS_MAIUSCULOS
+        );
+    }
+
+    char Transforma(char ch, const char* de, const char* para) const
+    {
+        for (size_t i = 0; de[i] != '\0'; i++)
+        {
+            if (ch == de[i])
+            {
+                return para[i];
+            }
+        }
+
+        return ch;
+    }
+
+    std::string _expr;
+    size_t _posicao = 0;
+};
+
+// ------------------------------------------------------------------------------------------------
+#include <iostream>
 class TParser : public IParser
 {
 public:
@@ -14,6 +331,17 @@ public:
 
     TNoh* Parse(const std::string& expr) override
     {
+        std::cout << "TParser::Parse::" << expr << "\n";
+
+        TLexer lexer(expr);
+
+        TLexer::TToken token = lexer.ProcessaProximo();
+        while (token.Tipo() != TLexer::EToken::FIM)
+        {
+            std::cout << "    " << token.ToString() << "\n";
+            token = lexer.ProcessaProximo();
+        }
+        
         return nullptr;
     }
 };
