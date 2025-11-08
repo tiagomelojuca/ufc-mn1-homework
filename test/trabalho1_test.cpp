@@ -101,7 +101,7 @@ TEST(trabalho1_test, deve_ser_capaz_calcular_arvore)
 
 TEST(trabalho1_test, deve_ser_capaz_de_parsear_expressao_valida)
 {
-    TParser parser;
+    TNaiveParser parser;
 
     // Casos Basicos
     EXPECT_TRUE(parser.Parse("f(x) = 5.0") != nullptr);

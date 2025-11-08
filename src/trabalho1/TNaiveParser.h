@@ -1,16 +1,17 @@
-#ifndef TPARSER_H_
-#define TPARSER_H_
+#ifndef TNAIVEPARSER_H_
+#define TNAIVEPARSER_H_
 
 #include <algorithm>
 #include <string>
 
+#include "IParser.h"
 #include "TArvoreSintatica.h"
 
 #include <iostream>
 
 // ------------------------------------------------------------------------------------------------
 
-class TParser
+class TNaiveParser : public IParser
 {
 private:
     struct TOcorrenciaCaractere { char ch; size_t pos; };
@@ -24,14 +25,16 @@ private:
     };
 
 public:
-    TParser() = default;
+    TNaiveParser() = default;
 
-    TNoh* Parse(std::string expr)
+    TNoh* Parse(const std::string& expr) override
     {
+        _expr = expr;
+
         TNoh* noh = nullptr;
 
-        Normaliza(expr);
-        if (ExpressaoValida(expr))
+        Normaliza(_expr);
+        if (ExpressaoValida(_expr))
         {
             noh = new TNohLiteral;
 
@@ -39,9 +42,9 @@ public:
 
             std::string numeroCorrente = "";
 
-            for (int i = 0; i < expr.length(); i++)
+            for (int i = 0; i < _expr.length(); i++)
             {
-                const char ch = expr[i];
+                const char ch = _expr[i];
                 if (EhCaractereNumerico(ch))
                 {
                     numeroCorrente += ch;
@@ -283,4 +286,4 @@ private:
 
 // ------------------------------------------------------------------------------------------------
 
-#endif
+#endif // TNAIVEPARSER_H_
