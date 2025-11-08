@@ -39,6 +39,16 @@ public:
             return _tipo;
         }
 
+        const std::string& Valor() const
+        {
+            return _valor;
+        }
+
+        size_t Posicao() const
+        {
+            return _posicao;
+        }
+
         std::string ToString() const
         {
             std::string str;
@@ -88,6 +98,51 @@ public:
 
     TLexer(const std::string& expr) : _expr(expr) {}
 
+    TToken Proximo()
+    {
+        return Normalizado(ProcessaProximo());
+    }
+
+private:
+    TToken Normalizado(const TToken& token)
+    {
+        if (token.Tipo() == EToken::NUMERO)
+        {
+            std::string numero = token.Valor();
+            for (size_t i = 0; i < numero.length(); i++)
+            {
+                if (numero[i] == ',')
+                {
+                    numero[i] = '.';
+                }
+            }
+
+            return { token.Tipo(), numero, token.Posicao() };
+        }
+
+        if (token.Tipo() == EToken::IDENTIFICADOR)
+        {
+            std::string identificador = token.Valor();
+            for (size_t i = 0; i < identificador.length(); i++)
+            {
+                identificador[i] = ToLower(identificador[i]);
+            }
+
+            if (identificador == "sen")
+            {
+                identificador = "sin";
+            }
+            else if (identificador == "tg")
+            {
+                identificador = "tan";
+            }
+
+            return { token.Tipo(), identificador, token.Posicao() };
+        }
+
+        return token;
+    }
+
     TToken ProcessaProximo()
     {
         AvancaEspacos();
@@ -117,7 +172,6 @@ public:
         return TToken {};
     }
 
-private:
     TToken ProcessaFim()
     {
         return { EToken::FIM, "", _posicao };
@@ -152,6 +206,16 @@ private:
         }
 
         token = ProcessaPalavra("cos");
+        if (token.Valido()) {
+            return token;
+        }
+
+        token = ProcessaPalavra("tan");
+        if (token.Valido()) {
+            return token;
+        }
+
+        token = ProcessaPalavra("tg");
         if (token.Valido()) {
             return token;
         }
@@ -335,11 +399,11 @@ public:
 
         TLexer lexer(expr);
 
-        TLexer::TToken token = lexer.ProcessaProximo();
+        TLexer::TToken token = lexer.Proximo();
         while (token.Tipo() != TLexer::EToken::FIM)
         {
             std::cout << "    " << token.ToString() << "\n";
-            token = lexer.ProcessaProximo();
+            token = lexer.Proximo();
         }
         
         return nullptr;

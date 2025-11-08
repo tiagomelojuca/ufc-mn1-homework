@@ -106,8 +106,23 @@ TEST(trabalho1_test, deve_ser_capaz_de_parsear_expressao_valida)
 
     // Casos Basicos
     EXPECT_TRUE(parser.Parse("f(x) = 5.0") != nullptr);
+    EXPECT_TRUE(parser.Parse("f(x) = 5,0") != nullptr);
     EXPECT_TRUE(parser.Parse("f(x) = x") != nullptr);
+    EXPECT_TRUE(parser.Parse("f(x) = sin(x)") != nullptr);
+    EXPECT_TRUE(parser.Parse("f(x) = Sin(x)") != nullptr);
+    EXPECT_TRUE(parser.Parse("f(x) = SIN(x)") != nullptr);
     EXPECT_TRUE(parser.Parse("f(x) = sen(x)") != nullptr);
+    EXPECT_TRUE(parser.Parse("f(x) = Sen(x)") != nullptr);
+    EXPECT_TRUE(parser.Parse("f(x) = SEN(x)") != nullptr);
+    EXPECT_TRUE(parser.Parse("f(x) = cos(x)") != nullptr);
+    EXPECT_TRUE(parser.Parse("f(x) = Cos(x)") != nullptr);
+    EXPECT_TRUE(parser.Parse("f(x) = COS(x)") != nullptr);
+    EXPECT_TRUE(parser.Parse("f(x) = tan(x)") != nullptr);
+    EXPECT_TRUE(parser.Parse("f(x) = Tan(x)") != nullptr);
+    EXPECT_TRUE(parser.Parse("f(x) = TAN(x)") != nullptr);
+    EXPECT_TRUE(parser.Parse("f(x) = tg(x)") != nullptr);
+    EXPECT_TRUE(parser.Parse("f(x) = Tg(x)") != nullptr);
+    EXPECT_TRUE(parser.Parse("f(x) = TG(x)") != nullptr);
     EXPECT_TRUE(parser.Parse("f(x) = x + 7") != nullptr);
     EXPECT_TRUE(parser.Parse("f(x) = 3x^2 * sen(x) + 7") != nullptr);
     EXPECT_TRUE(parser.Parse("f(x) = 3x^2 * (sen(x) + 7)") != nullptr);
