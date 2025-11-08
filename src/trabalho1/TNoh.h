@@ -16,6 +16,7 @@ public:
         delete _dir;
     }
 
+    // Avalia/Evaluate, mas, pelo ctx matematico, achei mais apropriado Valor
     virtual float Valor() = 0;
 
     TNoh* Esq()

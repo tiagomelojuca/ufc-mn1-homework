@@ -15,6 +15,7 @@ public:
         delete _raiz;
     }
 
+    // Avalia/Evaluate, mas, pelo ctx matematico, achei mais apropriado Resolve
     float Resolve(float x)
     {
         auto AplicaValorX = [x](TNoh& noh)
