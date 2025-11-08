@@ -1,7 +1,7 @@
 #ifndef TPARSER_H_
 #define TPARSER_H_
 
-#include <unordered_map>
+#include <vector>
 
 #include "IParser.h"
 #include "TArvoreSintatica.h"
@@ -193,43 +193,25 @@ private:
 
     TToken ProcessaIdentificador()
     {
-        TToken token;
+        std::vector<std::string> palavrasReservadas;
 
-        token = ProcessaPalavra("sin");
-        if (token.Valido()) {
-            return token;
+        palavrasReservadas.push_back("sin");
+        palavrasReservadas.push_back("sen");
+        palavrasReservadas.push_back("cos");
+        palavrasReservadas.push_back("tan");
+        palavrasReservadas.push_back("tg");
+        palavrasReservadas.push_back("pi");
+
+        for (const std::string& palavraReservada : palavrasReservadas)
+        {
+            const TToken token = ProcessaPalavra(palavraReservada);
+            if (token.Valido()) {
+                return token;
+            }
         }
 
-        token = ProcessaPalavra("sen");
-        if (token.Valido()) {
-            return token;
-        }
-
-        token = ProcessaPalavra("cos");
-        if (token.Valido()) {
-            return token;
-        }
-
-        token = ProcessaPalavra("tan");
-        if (token.Valido()) {
-            return token;
-        }
-
-        token = ProcessaPalavra("tg");
-        if (token.Valido()) {
-            return token;
-        }
-
-        token = ProcessaPalavra("pi");
-        if (token.Valido()) {
-            return token;
-        }
-
-        std::string conteudo;
-        conteudo += Corrente();
-        token = TToken { EToken::IDENTIFICADOR, conteudo, _posicao };
+        const TToken token { EToken::IDENTIFICADOR, ToString(Corrente()), _posicao };
         Avanca();
-
         return token;
     }
 
@@ -283,11 +265,8 @@ private:
             tipoToken = EToken::IGUAL;
         }
 
-        std::string conteudo;
-        conteudo += ch;
-        TToken token { tipoToken, conteudo, _posicao };
+        const TToken token { tipoToken, ToString(ch), _posicao };
         Avanca();
-
         return token;
     }
 
@@ -379,6 +358,13 @@ private:
         }
 
         return ch;
+    }
+
+    std::string ToString(char ch) const
+    {
+        std::string str;
+        str += ch;
+        return str;
     }
 
     std::string _expr;
