@@ -4,7 +4,7 @@
 #include <string>
 #include <limits>
 
-#include "TNaiveParser.h"
+#include "TParser.h"
 
 // ------------------------------------------------------------------------------------------------
 
@@ -22,7 +22,7 @@ namespace FuncoesMatematicas
     {
         float resultado = Sentinela();
 
-        TNaiveParser parser;
+        TParser parser;
         TNoh* raiz = parser.Parse(expr);
         if (raiz != nullptr)
         {

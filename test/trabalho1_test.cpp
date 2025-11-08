@@ -1,7 +1,8 @@
 #include <gtest/gtest.h>
 
-#include "trabalho1/TArvoreSintatica.h"
 #include "trabalho1/FuncoesMatematicas.h"
+#include "trabalho1/TArvoreSintatica.h"
+#include "trabalho1/TParser.h"
 
 TEST(trabalho1_test, deve_ser_capaz_calcular_arvore)
 {
@@ -101,7 +102,7 @@ TEST(trabalho1_test, deve_ser_capaz_calcular_arvore)
 
 TEST(trabalho1_test, deve_ser_capaz_de_parsear_expressao_valida)
 {
-    TNaiveParser parser;
+    TParser parser;
 
     // Casos Basicos
     EXPECT_TRUE(parser.Parse("f(x) = 5.0") != nullptr);
