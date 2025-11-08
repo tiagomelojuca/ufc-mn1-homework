@@ -264,20 +264,20 @@ private:
         return pos < _expr.length() ? _expr[pos] : '\0';
     }
 
-    bool EhCaractereAlfabetico(char ch)
+    bool EhCaractereAlfabetico(char ch) const
     {
         return StringContemCaractere(CARACTERES_ALFABETICOS_MINUSCULOS, ch) ||
                StringContemCaractere(CARACTERES_ALFABETICOS_MAIUSCULOS, ch);
     }
-    bool EhCaractereNumerico(char ch)
+    bool EhCaractereNumerico(char ch) const
     {
         return StringContemCaractere(CARACTERES_NUMERICOS, ch);
     }
-    bool EhCaractereSimbolico(char ch)
+    bool EhCaractereSimbolico(char ch) const
     {
         return StringContemCaractere(CARACTERES_SIMBOLICOS, ch);
     }
-    bool StringContemCaractere(const char* str, char ch)
+    bool StringContemCaractere(const char* str, char ch) const
     {
         for (size_t i = 0; str[i] != '\0'; i++)
         {
@@ -290,14 +290,14 @@ private:
         return false;
     }
 
-    char ToLower(char ch)
+    char ToLower(char ch) const
     {
         return Transforma(
             ch, CARACTERES_ALFABETICOS_MAIUSCULOS, CARACTERES_ALFABETICOS_MINUSCULOS
         );
     }
 
-    char ToUpper(char ch)
+    char ToUpper(char ch) const
     {
         return Transforma(
             ch, CARACTERES_ALFABETICOS_MINUSCULOS, CARACTERES_ALFABETICOS_MAIUSCULOS
