@@ -158,7 +158,7 @@ TEST(trabalho1_test, deve_ser_capaz_de_parsear_expressao_valida)
     EXPECT_TRUE(parser.Parse("f(x) = (((()") == nullptr);
 }
 
-TEST(trabalho1_test, deve_ser_capaz_de_construir_arvore_sintatica)
+TEST(trabalho1_test, deve_ser_capaz_de_calcular_expressoes)
 {
     const double erro = 0.1;
 
