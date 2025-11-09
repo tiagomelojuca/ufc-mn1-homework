@@ -401,7 +401,7 @@ public:
     {
         _lexer = TLexer(expr);
 
-        if (!CabecalhoValido() || FuncaoInconsistente())
+        if (!FuncaoValida())
         {
             return nullptr;
         }
@@ -410,6 +410,11 @@ public:
     }
 
 private:
+    bool FuncaoValida()
+    {
+        return CabecalhoValido() && CorpoValido();
+    }
+
     bool CabecalhoValido()
     {
         std::vector<TLexer::EToken> tokensEsperados;
@@ -453,7 +458,17 @@ private:
         return cabecalhoValido;
     }
 
-    bool FuncaoInconsistente()
+    bool CorpoValido()
+    {
+        if (VariavelInconsistente())
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    bool VariavelInconsistente()
     {
         bool inconsistente = false;
 
