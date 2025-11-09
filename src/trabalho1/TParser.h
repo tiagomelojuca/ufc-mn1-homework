@@ -391,7 +391,7 @@ private:
 };
 
 // ------------------------------------------------------------------------------------------------
-#include <iostream>
+
 class TParser : public IParser
 {
 public:
@@ -402,7 +402,7 @@ public:
     {
         _lexer = TLexer(expr);
 
-        if (!FuncaoValida())
+        if (!ExpressaoValida())
         {
             return nullptr;
         }
@@ -411,7 +411,7 @@ public:
     }
 
 private:
-    bool FuncaoValida()
+    bool ExpressaoValida()
     {
         return CabecalhoValido() && CorpoValido();
     }
