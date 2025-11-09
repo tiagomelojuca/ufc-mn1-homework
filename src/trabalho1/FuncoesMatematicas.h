@@ -4,7 +4,7 @@
 #include <string>
 #include <limits>
 
-#include "TParser.h"
+#include "FabricacaoArvoreSintatica.h"
 
 // ------------------------------------------------------------------------------------------------
 
@@ -22,12 +22,10 @@ namespace FuncoesMatematicas
     {
         float resultado = Sentinela();
 
-        TParser parser;
-        TNoh* raiz = parser.Parse(expr);
-        if (raiz != nullptr)
+        if (TArvoreSintatica* arv = FabricacaoArvoreSintatica::Fabrica(expr))
         {
-            TArvoreSintatica arvore(raiz);
-            resultado = arvore.Resolve(x);
+            resultado = arv->Resolve(x);
+            delete arv;
         }
 
         return resultado;
