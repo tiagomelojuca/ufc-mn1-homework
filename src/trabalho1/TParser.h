@@ -406,7 +406,7 @@ public:
             return nullptr;
         }
         
-        return nullptr;
+        return new TNohConstante { 0.0 };
     }
 
 private:
