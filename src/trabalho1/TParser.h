@@ -401,30 +401,29 @@ public:
 
     TNoh* Parse(const std::string& expr) override
     {
-        _lexer = TLexer(expr);
-
-        if (!ExpressaoValida())
-        {
-            return nullptr;
-        }
-
-        // ToDo: puxar ObtemTokens para primeira chamada
-        //       e fazer validacoes ja com o vetor populado
-        //       em vez de direto com o Lexer
-        ObtemTokens();
-
-        return ParseExpressao();
+        return ExecutaAnaliseLexica(expr) ? ParseExpressao() : nullptr;
     }
 
 private:
-    void ObtemTokens()
+    bool ExecutaAnaliseLexica(const std::string& expr)
     {
-        TLexer::TToken tokenCorrente = _lexer.Proximo();
-        while (tokenCorrente.Tipo() != TLexer::EToken::FIM)
+        _tokens.clear();
+        _posicao = 0;
+
+        TLexer lexer { expr };
+        const bool analiseOk = ExpressaoValida(lexer);
+
+        if (analiseOk)
         {
-            _tokens.push_back(tokenCorrente);
-            tokenCorrente = _lexer.Proximo();
+            TLexer::TToken tokenCorrente = lexer.Proximo();
+            while (tokenCorrente.Tipo() != TLexer::EToken::FIM)
+            {
+                _tokens.push_back(tokenCorrente);
+                tokenCorrente = lexer.Proximo();
+            }
         }
+
+        return analiseOk;
     }
 
     TLexer::TToken Corrente()
@@ -595,12 +594,12 @@ private:
         return nullptr;
     }
 
-    bool ExpressaoValida()
+    bool ExpressaoValida(TLexer& lexer) const
     {
-        return CabecalhoValido() && CorpoValido();
+        return CabecalhoValido(lexer) && CorpoValido(lexer);
     }
 
-    bool CabecalhoValido()
+    bool CabecalhoValido(TLexer& lexer) const
     {
         std::vector<TLexer::EToken> tokensEsperados;
         tokensEsperados.push_back(TLexer::EToken::IDENTIFICADOR);      // f
@@ -614,7 +613,7 @@ private:
         bool cabecalhoValido = true;
         for (size_t i = 0; i < 5; i++)
         {
-            const TLexer::TToken token = _lexer.Proximo();
+            const TLexer::TToken token = lexer.Proximo();
             tokensLidos.push_back(token);
 
             if (!token.Valido() || token.Tipo() != tokensEsperados[i])
@@ -632,26 +631,21 @@ private:
             cabecalhoValido = variavelDependente != variavelIndependente &&
                               !TLexer::EhPalavraReservada(variavelDependente) &&
                               !TLexer::EhPalavraReservada(variavelIndependente);
-
-            if (cabecalhoValido)
-            {
-                _variavelIndependente = variavelIndependente;
-            }
         }
 
         return cabecalhoValido;
     }
 
-    bool CorpoValido()
+    bool CorpoValido(TLexer& lexer) const
     {
-        return !TemTokenInvalido() && !ParentesisInvalidos();
+        return !TemTokenInvalido(lexer) && !ParentesisInvalidos(lexer);
     }
 
-    bool TemTokenInvalido()
+    bool TemTokenInvalido(TLexer& lexer) const
     {
         bool temTokenInvalido = false;
 
-        const TLexer::TToken inicioCorpo = _lexer.Proximo();
+        const TLexer::TToken inicioCorpo = lexer.Proximo();
 
         TLexer::TToken tokenCorrente = inicioCorpo;
         while (tokenCorrente.Tipo() != TLexer::EToken::FIM)
@@ -662,19 +656,19 @@ private:
                 break;
             }
 
-            tokenCorrente = _lexer.Proximo();
+            tokenCorrente = lexer.Proximo();
         }
 
-        _lexer.Solicita(inicioCorpo);
+        lexer.Solicita(inicioCorpo);
 
         return temTokenInvalido;
     }
 
-    bool ParentesisInvalidos()
+    bool ParentesisInvalidos(TLexer& lexer) const
     {
         bool temParentesisInvalidos = false;
 
-        const TLexer::TToken inicioCorpo = _lexer.Proximo();
+        const TLexer::TToken inicioCorpo = lexer.Proximo();
 
         std::vector<TLexer::TToken> aberturas;
         std::vector<TLexer::TToken> fechamentos;
@@ -699,7 +693,7 @@ private:
             }
 
             tokenAnterior = tokenCorrente;
-            tokenCorrente = _lexer.Proximo();
+            tokenCorrente = lexer.Proximo();
         }
 
         temParentesisInvalidos |= aberturas.size() != fechamentos.size();
@@ -730,7 +724,7 @@ private:
             temParentesisInvalidos = fechamentos.size() != 0;
         }
 
-        _lexer.Solicita(inicioCorpo);
+        lexer.Solicita(inicioCorpo);
 
         return temParentesisInvalidos;
     }
@@ -746,7 +740,6 @@ private:
         return token.Tipo() != TLexer::EToken::IGUAL;
     }
 
-    TLexer _lexer;
     std::vector<TLexer::TToken> _tokens;
     size_t _posicao = 0;
 
