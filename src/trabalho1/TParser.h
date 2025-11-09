@@ -38,6 +38,19 @@ public:
         return palavraReservada;
     }
 
+    static bool EhPalavraReservada(const std::string& palavra)
+    {
+        for (const std::string& palavraReservada : PalavrasReservadas())
+        {
+            if (palavra == palavraReservada)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     enum class EToken
     {
         NUMERO, IDENTIFICADOR, OPERADOR, ABERTURA_SUBEXPR, FECHAMENTO_SUBEXPR, IGUAL, FIM
@@ -431,22 +444,12 @@ private:
 
         if (cabecalhoValido)
         {
-            const TLexer::TToken& tokenIdVarDependente = tokensLidos[0];
-            const TLexer::TToken& tokenIdVariavelIndependente = tokensLidos[2];
+            const TLexer::TToken& tokenVarDependente = tokensLidos[0];
+            const TLexer::TToken& tokenVariavelIndependente = tokensLidos[2];
 
-            cabecalhoValido = tokenIdVarDependente.Valor() != tokenIdVariavelIndependente.Valor();
-            if (cabecalhoValido)
-            {
-                for (const std::string& palavraReservada : TLexer::PalavrasReservadas())
-                {
-                    if (tokenIdVarDependente.Valor() == palavraReservada ||
-                        tokenIdVariavelIndependente.Valor() == palavraReservada)
-                    {
-                        cabecalhoValido = false;
-                        break;
-                    }
-                }
-            }
+            cabecalhoValido = tokenVarDependente.Valor() != tokenVariavelIndependente.Valor() &&
+                              !TLexer::EhPalavraReservada(tokenVarDependente) &&
+                              !TLexer::EhPalavraReservada(tokenVariavelIndependente);
         }
 
         return cabecalhoValido;
