@@ -128,10 +128,10 @@ TEST(trabalho1_test, deve_ser_capaz_de_parsear_expressao_valida)
     EXPECT_TRUE(parser.Parse("f(x) = 3x^2 * (sen(x) + 7)") != nullptr);
 
     // Deve sinalizar cadeia invalida
-    EXPECT_TRUE(parser.Parse("f(x) = f(x) = 5.0 f(x)=") != nullptr);
-    EXPECT_TRUE(parser.Parse("f(x) = (5.0)") != nullptr);
-    EXPECT_TRUE(parser.Parse("f(x) = 5.0()") != nullptr);
-    EXPECT_TRUE(parser.Parse("f(x) = ()5.0") != nullptr);
+    EXPECT_TRUE(parser.Parse("f(x) = f(x) = 5.0 f(x)=") == nullptr);
+    EXPECT_TRUE(parser.Parse("f(x) = (5.0)") == nullptr);
+    EXPECT_TRUE(parser.Parse("f(x) = 5.0()") == nullptr);
+    EXPECT_TRUE(parser.Parse("f(x) = ()5.0") == nullptr);
     EXPECT_TRUE(parser.Parse("f(x) = 5.0 =") == nullptr);
     EXPECT_TRUE(parser.Parse("f(x) = )5.0(") == nullptr);
     EXPECT_TRUE(parser.Parse("f(x) = 5.0)") == nullptr);
