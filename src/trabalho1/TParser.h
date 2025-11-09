@@ -16,6 +16,20 @@ public:
     constexpr static const char* CARACTERES_NUMERICOS = "0123456789.,";
     constexpr static const char* CARACTERES_SIMBOLICOS = "+-*/^()=";
 
+    static std::vector<std::string> PalavrasReservadas()
+    {
+        std::vector<std::string> palavrasReservadas;
+
+        palavrasReservadas.push_back("sin");
+        palavrasReservadas.push_back("sen");
+        palavrasReservadas.push_back("cos");
+        palavrasReservadas.push_back("tan");
+        palavrasReservadas.push_back("tg");
+        palavrasReservadas.push_back("pi");
+
+        return palavrasReservadas;
+    }
+
     enum class EToken
     {
         NUMERO, IDENTIFICADOR, OPERADOR, ABERTURA_SUBEXPR, FECHAMENTO_SUBEXPR, IGUAL, FIM
@@ -103,8 +117,13 @@ public:
         return Normalizado(ProcessaProximo());
     }
 
+    void Solicita(const TToken& t)
+    {
+        Solicita(t.Posicao());
+    }
+
 private:
-    TToken Normalizado(const TToken& token)
+    TToken Normalizado(const TToken& token) const
     {
         if (token.Tipo() == EToken::NUMERO)
         {
@@ -193,16 +212,7 @@ private:
 
     TToken ProcessaIdentificador()
     {
-        std::vector<std::string> palavrasReservadas;
-
-        palavrasReservadas.push_back("sin");
-        palavrasReservadas.push_back("sen");
-        palavrasReservadas.push_back("cos");
-        palavrasReservadas.push_back("tan");
-        palavrasReservadas.push_back("tg");
-        palavrasReservadas.push_back("pi");
-
-        for (const std::string& palavraReservada : palavrasReservadas)
+        for (const std::string& palavraReservada : PalavrasReservadas())
         {
             const TToken token = ProcessaPalavra(palavraReservada);
             if (token.Valido()) {
@@ -301,6 +311,13 @@ private:
     {
         return Caractere(_posicao + offset);
     }
+    void Solicita(size_t pos) // Seek
+    {
+        if (pos < _expr.length())
+        {
+            _posicao = pos;
+        }
+    }
 
     char Caractere(size_t pos) const
     {
@@ -381,19 +398,67 @@ public:
 
     TNoh* Parse(const std::string& expr) override
     {
+        _lexer = new TLexer(expr);
+
         std::cout << "TParser::Parse::" << expr << "\n";
 
-        TLexer lexer(expr);
-
-        TLexer::TToken token = lexer.Proximo();
+        TLexer::TToken token = _lexer->Proximo();
         while (token.Tipo() != TLexer::EToken::FIM)
         {
             std::cout << "    " << token.ToString() << "\n";
-            token = lexer.Proximo();
+            token = _lexer->Proximo();
         }
+
+        delete _lexer;
         
         return nullptr;
     }
+
+private:
+    bool CabecalhoValido()
+    {
+        std::vector<TLexer::EToken> tokensEsperados;
+        tokensEsperados.push_back(TLexer::EToken::IDENTIFICADOR);      // f
+        tokensEsperados.push_back(TLexer::EToken::ABERTURA_SUBEXPR);   // (
+        tokensEsperados.push_back(TLexer::EToken::IDENTIFICADOR);      // x
+        tokensEsperados.push_back(TLexer::EToken::FECHAMENTO_SUBEXPR); // )
+        tokensEsperados.push_back(TLexer::EToken::IGUAL);              // =
+
+        std::vector<TLexer::TToken> tokensLidos;
+
+        bool cabecalhoValido = true;
+        for (size_t i = 0; i < 5; i++)
+        {
+            const TLexer::TToken token = _lexer->Proximo();
+            tokensLidos.push_back(token);
+
+            if (!token.Valido() || token.Tipo() != tokensEsperados[i])
+            {
+                cabecalhoValido = false;
+                break;
+            }
+        }
+
+        if (cabecalhoValido)
+        {
+            const TLexer::TToken& tokenIdVariavelDependente = tokensLidos[0];
+            const TLexer::TToken& tokenIdVariavelIndependente = tokensLidos[2];
+
+            for (const std::string& palavraReservada : TLexer::PalavrasReservadas())
+            {
+                if (tokenIdVariavelDependente.Valor() == palavraReservada ||
+                    tokenIdVariavelIndependente.Valor() == palavraReservada)
+                {
+                    cabecalhoValido = false;
+                    break;
+                }
+            }
+        }
+
+        return cabecalhoValido;
+    }
+
+    TLexer* _lexer = nullptr;
 };
 
 // ------------------------------------------------------------------------------------------------
