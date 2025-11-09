@@ -432,7 +432,10 @@ private:
 
     TLexer::TToken Corrente()
     {
-        return _posicao < _tokens.size() ? _tokens[_posicao] : _tokens.back();
+        // ToDo: avaliar pq nao pode so usar _tokens.back()
+        return _posicao < _tokens.size()
+            ? _tokens[_posicao]
+            : TLexer::TToken { TLexer::EToken::FIM, "", 0 };
     }
 
     TLexer::TToken Consome()
