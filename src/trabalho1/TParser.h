@@ -401,12 +401,7 @@ public:
     {
         _lexer = TLexer(expr);
 
-        if (!CabecalhoValido())
-        {
-            return nullptr;
-        }
-
-        if (FuncaoInconsistente())
+        if (!CabecalhoValido() || FuncaoInconsistente())
         {
             return nullptr;
         }
