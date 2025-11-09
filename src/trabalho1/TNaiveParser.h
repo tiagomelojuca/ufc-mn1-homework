@@ -10,6 +10,10 @@
 #include <iostream>
 
 // ------------------------------------------------------------------------------------------------
+// DEPRECADO
+// Tava horrivel, vou estudar como o pessoal faz de verdade e reimplementar, mas vou manter
+// aqui pra depois ver quao ruim tava
+// ------------------------------------------------------------------------------------------------
 
 class TNaiveParser : public IParser
 {
