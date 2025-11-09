@@ -10,11 +10,16 @@ class TNoh
 public:
     TNoh() = default;
     TNoh(TNoh* esq, TNoh* dir) : _esq(esq), _dir(dir) {}
+    TNoh(const TNoh&) = delete;
+    TNoh(TNoh&&) = delete;
+
     virtual ~TNoh()
     {
         delete _esq;
         delete _dir;
     }
+
+    TNoh& operator=(const TNoh&) = delete;
 
     // Avalia/Evaluate, mas, pelo ctx matematico, achei mais apropriado Valor
     virtual float Valor() = 0;

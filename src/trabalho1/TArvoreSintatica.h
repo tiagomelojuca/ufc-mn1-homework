@@ -8,12 +8,17 @@
 class TArvoreSintatica
 {
 public:
+    TArvoreSintatica() = delete;
     TArvoreSintatica(TNoh* raiz) : _raiz(raiz) {}
+    TArvoreSintatica(const TArvoreSintatica&) = delete;
+    TArvoreSintatica(TArvoreSintatica&&) = delete;
 
     ~TArvoreSintatica()
     {
         delete _raiz;
     }
+
+    TArvoreSintatica& operator=(const TArvoreSintatica&) = delete;
 
     // Avalia/Evaluate, mas, pelo ctx matematico, achei mais apropriado Resolve
     float Resolve(float x)
