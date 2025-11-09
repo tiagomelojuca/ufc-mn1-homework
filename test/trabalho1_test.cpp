@@ -136,6 +136,8 @@ TEST(trabalho1_test, deve_ser_capaz_de_parsear_expressao_valida)
     EXPECT_TRUE(parser.Parse("f(x) = ()5.0") == nullptr);
     EXPECT_TRUE(parser.Parse("f(x) = 5.0 =") == nullptr);
     EXPECT_TRUE(parser.Parse("f(x) = )5.0(") == nullptr);
+    EXPECT_TRUE(parser.Parse("f(x) = )5.0") == nullptr);
+    EXPECT_TRUE(parser.Parse("f(x) = (5.0") == nullptr);
     EXPECT_TRUE(parser.Parse("f(x) = 5.0)") == nullptr);
     EXPECT_TRUE(parser.Parse("f(x) = 5.0(") == nullptr);
     EXPECT_TRUE(parser.Parse("f(x) = ()") == nullptr);

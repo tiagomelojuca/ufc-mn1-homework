@@ -1,6 +1,7 @@
 #ifndef TPARSER_H_
 #define TPARSER_H_
 
+#include <algorithm>
 #include <vector>
 
 #include "IParser.h"
@@ -492,8 +493,8 @@ private:
 
         const TLexer::TToken inicioCorpo = _lexer.Proximo();
 
-        size_t aberturas = 0;
-        size_t fechamentos = 0;
+        std::vector<TLexer::TToken> aberturas;
+        std::vector<TLexer::TToken> fechamentos;
 
         TLexer::TToken tokenAnterior;
         TLexer::TToken tokenCorrente = inicioCorpo;
@@ -501,24 +502,50 @@ private:
         {
             if (tokenCorrente.Tipo() == TLexer::EToken::ABERTURA_SUBEXPR)
             {
-                aberturas++;
+                aberturas.push_back(tokenCorrente);
             }
             else if (tokenCorrente.Tipo() == TLexer::EToken::FECHAMENTO_SUBEXPR)
             {
-                fechamentos++;
-
                 if (tokenAnterior.Tipo() == TLexer::EToken::ABERTURA_SUBEXPR)
                 {
                     temParentesisInvalidos = true;
                     break;
                 }
+
+                fechamentos.push_back(tokenCorrente);
             }
 
             tokenAnterior = tokenCorrente;
             tokenCorrente = _lexer.Proximo();
         }
 
-        temParentesisInvalidos |= aberturas != fechamentos;
+        temParentesisInvalidos |= aberturas.size() != fechamentos.size();
+
+        if (!temParentesisInvalidos)
+        {
+            std::sort(aberturas.begin(), aberturas.end(), [](const auto& t1, const auto& t2)
+            {
+                return t1.Posicao() < t2.Posicao();
+            });
+            std::sort(fechamentos.begin(), fechamentos.end(), [](const auto& t1, const auto& t2)
+            {
+                return t1.Posicao() < t2.Posicao();
+            });
+
+            for (int i = aberturas.size() - 1; i >= 0; i--)
+            {
+                for (int j = 0; j < fechamentos.size(); j++)
+                {
+                    if (fechamentos[j].Posicao() > aberturas[i].Posicao())
+                    {
+                        fechamentos.erase(fechamentos.begin() + j);
+                        break;
+                    }
+                }
+            }
+
+            temParentesisInvalidos = fechamentos.size() != 0;
+        }
 
         _lexer.Solicita(inicioCorpo);
 
