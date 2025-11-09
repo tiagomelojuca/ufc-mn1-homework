@@ -406,11 +406,190 @@ public:
         {
             return nullptr;
         }
-        
-        return new TNohConstante { 0.0 };
+
+        // ToDo: puxar ObtemTokens para primeira chamada
+        //       e fazer validacoes ja com o vetor populado
+        //       em vez de direto com o Lexer
+        ObtemTokens();
+
+        return ParseExpressao();
     }
 
 private:
+    void ObtemTokens()
+    {
+        TLexer::TToken tokenCorrente = _lexer.Proximo();
+        while (tokenCorrente.Tipo() != TLexer::EToken::FIM)
+        {
+            _tokens.push_back(tokenCorrente);
+            tokenCorrente = _lexer.Proximo();
+        }
+    }
+
+    TLexer::TToken Corrente()
+    {
+        return _posicao < _tokens.size() ? _tokens[_posicao] : _tokens.back();
+    }
+
+    TLexer::TToken Consome()
+    {
+        const TLexer::TToken token = Corrente();
+        if (token.Tipo() != TLexer::EToken::FIM) _posicao++;
+        return token;
+    }
+
+    TNoh* ParseExpressao()
+    {
+        TNoh* expressao = ParseTermo();
+
+        while (Corrente().Tipo() == TLexer::EToken::OPERADOR)
+        {
+            const std::string op = Corrente().Valor();
+            if (op != "+" && op != "-")
+                break;
+
+            Consome();
+            TNoh* termo = ParseTermo();
+
+            auto operacao = op == "+"
+                ? TNohOperacaoBinaria::EOperacao::SOMA
+                : TNohOperacaoBinaria::EOperacao::SUBTRACAO;
+            auto novaExpressao = new TNohOperacaoBinaria(operacao, expressao, termo);
+
+            expressao = novaExpressao;
+        }
+
+        return expressao;
+    }
+
+    TNoh* ParseTermo()
+    {
+        TNoh* termo = ParsePotencia();
+
+        while (Corrente().Tipo() == TLexer::EToken::OPERADOR)
+        {
+            std::string op = Corrente().Valor();
+            if (op != "*" && op != "/")
+                break;
+
+            Consome();
+            TNoh* potencia = ParsePotencia();
+
+            auto operacao = op == "*"
+                ? TNohOperacaoBinaria::EOperacao::MULTIPLICACAO
+                : TNohOperacaoBinaria::EOperacao::DIVISAO;
+            auto novoTermo = new TNohOperacaoBinaria(operacao, termo, potencia);
+
+            termo = novoTermo;
+        }
+
+        return termo;
+    }
+
+    TNoh* ParsePotencia()
+    {
+        TNoh* base = ParsePrimario();
+
+        if (Corrente().Tipo() == TLexer::EToken::OPERADOR && Corrente().Valor() == "^")
+        {
+            Consome();
+            base = new TNohOperacaoBinaria(
+                TNohOperacaoBinaria::EOperacao::EXPONENCIAL, base, ParseUnario()
+            );
+        }
+
+        // Lida com multiplicacoes implicitas, ex.: 3x
+        TLexer::TToken tipoProximo = Corrente();
+        if (tipoProximo == TLexer::EToken::IDENTIFICADOR || 
+            tipoProximo == TLexer::EToken::NUMERO ||
+            tipoProximo == TLexer::EToken::ABERTURA_SUBEXPR)
+        {
+            return new TNohOperacaoBinaria(
+                TNohOperacaoBinaria::EOperacao::MULTIPLICACAO, base, ParsePotencia()
+            );
+        }
+
+        return base;
+    }
+
+    TNoh* ParseUnario()
+    {
+        if (Corrente().Tipo() == TLexer::EToken::OPERADOR && Corrente().Valor() == "-")
+        {
+            Consome();
+            return new TNohOperacaoUnaria(
+                TNohOperacaoUnaria::EOperacao::SIMETRICO, ParseUnario()
+            );
+        }
+
+        return ParsePrimario();
+    }
+
+    TNoh* ParsePrimario()
+    {
+        TLexer::TToken token = Corrente();
+
+        if (token.Tipo() == TLexer::EToken::NUMERO)
+        {
+            Consome();
+            return new TNohConstante(std::stof(token.Valor()));
+        }
+
+        if (token.Tipo() == TLexer::EToken::IDENTIFICADOR)
+        {
+            Consome();
+            std::string id = token.Valor();
+
+            if (id == _variavelIndependente)
+            {
+                return new TNohLiteral();
+            }
+            else if (id == "sin")
+            {
+                return new TNohOperacaoUnaria(
+                    TNohOperacaoUnaria::EOperacao::SENO, ParsePrimario()
+                );
+            }
+            else if (id == "cos")
+            {
+                return new TNohOperacaoUnaria(
+                    TNohOperacaoUnaria::EOperacao::COSSENO, ParsePrimario()
+                );
+            }
+            else if (id == "tan")
+            {
+                return new TNohOperacaoUnaria(
+                    TNohOperacaoUnaria::EOperacao::TANGENTE, ParsePrimario()
+                );
+            }
+            else if (id == "pi")
+            {
+                return new TNohConstante(3.14159265359f);
+            }
+
+            return nullptr;
+        }
+
+        if (token.Tipo() == TLexer::EToken::ABERTURA_SUBEXPR)
+        {
+            Consome();
+            TNoh* expressao = ParseExpressao();
+            
+            if (Corrente().Tipo() == TLexer::EToken::FECHAMENTO_SUBEXPR)
+            {
+                Consome();
+                return expressao;
+            }
+            
+            delete expressao;
+            expressao = nullptr;
+
+            return expressao;
+        }
+
+        return nullptr;
+    }
+
     bool ExpressaoValida()
     {
         return CabecalhoValido() && CorpoValido();
@@ -564,6 +743,8 @@ private:
     }
 
     TLexer _lexer;
+    std::vector<TLexer::TToken> _tokens;
+    size_t _posicao = 0;
 
     std::string _variavelDependente;
     std::string _variavelIndependente;
