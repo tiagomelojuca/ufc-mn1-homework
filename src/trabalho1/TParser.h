@@ -30,6 +30,14 @@ public:
         return palavrasReservadas;
     }
 
+    static std::string Normaliza(const std::string& palavraReservada)
+    {
+        if (palavraReservada == "sen") return "sin";
+        if (palavraReservada == "tg")  return "tan";
+
+        return palavraReservada;
+    }
+
     enum class EToken
     {
         NUMERO, IDENTIFICADOR, OPERADOR, ABERTURA_SUBEXPR, FECHAMENTO_SUBEXPR, IGUAL, FIM
@@ -148,16 +156,7 @@ private:
                 identificador[i] = ToLower(identificador[i]);
             }
 
-            if (identificador == "sen")
-            {
-                identificador = "sin";
-            }
-            else if (identificador == "tg")
-            {
-                identificador = "tan";
-            }
-
-            return { token.Tipo(), identificador, token.Posicao() };
+            return { token.Tipo(), Normaliza(identificador), token.Posicao() };
         }
 
         return token;
