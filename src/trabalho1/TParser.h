@@ -179,7 +179,7 @@ private:
 
     TToken ProcessaProximo()
     {
-        AvancaEspacos();
+        AvancaCaracteresIgnorados();
 
         const char chCorrente = Corrente();
         if (EhCaractereFimCadeia(chCorrente))  return ProcessaFim();
@@ -279,9 +279,9 @@ private:
         return token;
     }
 
-    void AvancaEspacos()
+    void AvancaCaracteresIgnorados()
     {
-        while (Corrente() == ' ')
+        while (EhCaractereIgnorado(Corrente()))
         {
             Avanca();
         }
@@ -323,6 +323,10 @@ private:
         return pos < _expr.length() ? _expr[pos] : '\0';
     }
 
+    bool EhCaractereIgnorado(char ch) const
+    {
+        return ch == ' ' || ch == '\t' || ch == '\'';
+    }
     bool EhCaractereFimCadeia(char ch) const
     {
         return ch == '\0';
