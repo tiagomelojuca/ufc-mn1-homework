@@ -225,7 +225,7 @@ TEST(trabalho1_test, deve_ser_capaz_de_gerar_strings_a_partir_de_modelo)
     EXPECT_STREQ(str2.c_str(), "FooBar");
     EXPECT_STREQ(str3.c_str(), "FooBarBaz");
     EXPECT_STREQ(str4.c_str(), "FooBarBaz");
-    EXPECT_STREQ(str4.c_str(), "Foo Bar Baz");
+    EXPECT_STREQ(str5.c_str(), "Foo Bar Baz");
 }
 
 TEST(trabalho1_test, deve_ser_capaz_de_calcular_oscilacoes_de_ondas_sismicas)
