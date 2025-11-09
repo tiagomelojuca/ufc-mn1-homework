@@ -27,6 +27,7 @@ public:
         palavrasReservadas.push_back("tan");
         palavrasReservadas.push_back("tg");
         palavrasReservadas.push_back("pi");
+        palavrasReservadas.push_back("e");
 
         return palavrasReservadas;
     }
@@ -566,6 +567,10 @@ private:
             {
                 return new TNohConstante(3.14159265359f);
             }
+            else if (id == "e")
+            {
+                return new TNohConstante(2.71828182846f);
+            }
 
             return nullptr;
         }
@@ -630,7 +635,6 @@ private:
 
             if (cabecalhoValido)
             {
-                _variavelDependente = variavelDependente;
                 _variavelIndependente = variavelIndependente;
             }
         }
@@ -746,7 +750,6 @@ private:
     std::vector<TLexer::TToken> _tokens;
     size_t _posicao = 0;
 
-    std::string _variavelDependente;
     std::string _variavelIndependente;
 };
 

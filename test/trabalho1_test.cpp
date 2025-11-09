@@ -157,6 +157,10 @@ TEST(trabalho1_test, deve_ser_capaz_de_construir_arvore_sintatica)
     const double erro = 0.1;
 
     EXPECT_NEAR(FuncoesMatematicas::Calcula("f(x) = 5.0", 999), 5.0, erro);
+    EXPECT_NEAR(FuncoesMatematicas::Calcula("f(x) = 5.0^2", 999), 25.0, erro);
+
+    EXPECT_NEAR(FuncoesMatematicas::Calcula("f(x) = e", 999), 2.72, erro);
+    EXPECT_NEAR(FuncoesMatematicas::Calcula("f(x) = e^2", 999), 7.39, erro);
 
     EXPECT_NEAR(FuncoesMatematicas::Calcula("f(x) = x", 123), 123.0, erro);
     EXPECT_NEAR(FuncoesMatematicas::Calcula("f(x) = x", 999), 999.0, erro);
