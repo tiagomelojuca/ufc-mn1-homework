@@ -388,13 +388,17 @@ public:
     {
         _lexer = TLexer(expr);
 
-        std::cout << "TParser::Parse::" << expr << "\n";
+        if (!CabecalhoValido())
+        {
+            return nullptr;
+        }
 
-        TLexer::TToken token = _lexer.Proximo();
+        const TLexer::TToken inicioCorpo = _lexer.Proximo();
+
+        TToken tokenCorrente = inicioCorpo;
         while (token.Tipo() != TLexer::EToken::FIM)
         {
-            std::cout << "    " << token.ToString() << "\n";
-            token = _lexer.Proximo();
+            tokenCorrente = _lexer.Proximo();
         }
         
         return nullptr;
@@ -427,16 +431,20 @@ private:
 
         if (cabecalhoValido)
         {
-            const TLexer::TToken& tokenIdVariavelDependente = tokensLidos[0];
+            const TLexer::TToken& tokenIdVarDependente = tokensLidos[0];
             const TLexer::TToken& tokenIdVariavelIndependente = tokensLidos[2];
 
-            for (const std::string& palavraReservada : TLexer::PalavrasReservadas())
+            cabecalhoValido = tokenIdVarDependente.Valor() != tokenIdVariavelIndependente.Valor();
+            if (cabecalhoValido)
             {
-                if (tokenIdVariavelDependente.Valor() == palavraReservada ||
-                    tokenIdVariavelIndependente.Valor() == palavraReservada)
+                for (const std::string& palavraReservada : TLexer::PalavrasReservadas())
                 {
-                    cabecalhoValido = false;
-                    break;
+                    if (tokenIdVarDependente.Valor() == palavraReservada ||
+                        tokenIdVariavelIndependente.Valor() == palavraReservada)
+                    {
+                        cabecalhoValido = false;
+                        break;
+                    }
                 }
             }
         }
