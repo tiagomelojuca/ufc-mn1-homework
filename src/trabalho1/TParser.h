@@ -110,6 +110,7 @@ public:
         size_t _posicao = 0;
     };
 
+    TLexer() = default;
     TLexer(const std::string& expr) : _expr(expr) {}
 
     TToken Proximo()
@@ -398,18 +399,16 @@ public:
 
     TNoh* Parse(const std::string& expr) override
     {
-        _lexer = new TLexer(expr);
+        _lexer = TLexer(expr);
 
         std::cout << "TParser::Parse::" << expr << "\n";
 
-        TLexer::TToken token = _lexer->Proximo();
+        TLexer::TToken token = _lexer.Proximo();
         while (token.Tipo() != TLexer::EToken::FIM)
         {
             std::cout << "    " << token.ToString() << "\n";
-            token = _lexer->Proximo();
+            token = _lexer.Proximo();
         }
-
-        delete _lexer;
         
         return nullptr;
     }
@@ -429,7 +428,7 @@ private:
         bool cabecalhoValido = true;
         for (size_t i = 0; i < 5; i++)
         {
-            const TLexer::TToken token = _lexer->Proximo();
+            const TLexer::TToken token = _lexer.Proximo();
             tokensLidos.push_back(token);
 
             if (!token.Valido() || token.Tipo() != tokensEsperados[i])
@@ -458,7 +457,7 @@ private:
         return cabecalhoValido;
     }
 
-    TLexer* _lexer = nullptr;
+    TLexer _lexer;
 };
 
 // ------------------------------------------------------------------------------------------------
