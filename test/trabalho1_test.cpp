@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 
+#include "trabalho1/FuncoesGerais.h"
 #include "trabalho1/FuncoesMatematicas.h"
 #include "trabalho1/TArvoreSintatica.h"
 #include "trabalho1/TCalculoOscilacoesSismicas.h"
@@ -210,6 +211,21 @@ TEST(trabalho1_test, deve_ser_capaz_de_calcular_expressoes)
     EXPECT_NEAR(FuncoesMatematicas::Calcula("f(d) = 7*e^d - 4*d^2", 4.0), 318.19, erro);
     EXPECT_NEAR(FuncoesMatematicas::Calcula("f(d) = 7*e^d - 4*d^2", 4.5), 549.12, erro);
     EXPECT_NEAR(FuncoesMatematicas::Calcula("f(d) = 7*e^d - 4*d^2", 5.0), 938.89, erro);
+}
+
+TEST(trabalho1_test, deve_ser_capaz_de_gerar_strings_a_partir_de_modelo)
+{
+    const std::string str1 = FuncoesGerais::InstanciaStringModelo("Foo");
+    const std::string str2 = FuncoesGerais::InstanciaStringModelo("Foo%1", "Bar");
+    const std::string str3 = FuncoesGerais::InstanciaStringModelo("Foo%1%2", "Bar", "Baz");
+    const std::string str4 = FuncoesGerais::InstanciaStringModelo("%1%2%3", "Foo", "Bar", "Baz");
+    const std::string str5 = FuncoesGerais::InstanciaStringModelo("%1 %2 %3", "Foo", "Bar", "Baz");
+
+    EXPECT_STREQ(str1.c_str(), "Foo");
+    EXPECT_STREQ(str2.c_str(), "FooBar");
+    EXPECT_STREQ(str3.c_str(), "FooBarBaz");
+    EXPECT_STREQ(str4.c_str(), "FooBarBaz");
+    EXPECT_STREQ(str4.c_str(), "Foo Bar Baz");
 }
 
 TEST(trabalho1_test, deve_ser_capaz_de_calcular_oscilacoes_de_ondas_sismicas)
