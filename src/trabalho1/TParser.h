@@ -167,26 +167,10 @@ private:
         AvancaEspacos();
 
         const char chCorrente = Corrente();
-
-        if (EhCaractereFimCadeia(chCorrente))
-        {
-            return ProcessaFim();
-        }
-
-        if (EhCaractereNumerico(chCorrente))
-        {
-            return ProcessaNumero();
-        }
-
-        if (EhCaractereAlfabetico(chCorrente))
-        {
-            return ProcessaIdentificador();
-        }
-
-        if (EhCaractereSimbolico(chCorrente))
-        {
-            return ProcessaSimbolo();
-        }
+        if (EhCaractereFimCadeia(chCorrente))  return ProcessaFim();
+        if (EhCaractereNumerico(chCorrente))   return ProcessaNumero();
+        if (EhCaractereAlfabetico(chCorrente)) return ProcessaIdentificador();
+        if (EhCaractereSimbolico(chCorrente))  return ProcessaSimbolo();
 
         return TToken {};
     }
