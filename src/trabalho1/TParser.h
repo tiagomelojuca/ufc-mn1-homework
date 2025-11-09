@@ -406,12 +406,9 @@ public:
             return nullptr;
         }
 
-        const TLexer::TToken inicioCorpo = _lexer.Proximo();
-
-        TToken tokenCorrente = inicioCorpo;
-        while (token.Tipo() != TLexer::EToken::FIM)
+        if (FuncaoInconsistente())
         {
-            tokenCorrente = _lexer.Proximo();
+            return nullptr;
         }
         
         return nullptr;
@@ -444,18 +441,51 @@ private:
 
         if (cabecalhoValido)
         {
-            const TLexer::TToken& tokenVarDependente = tokensLidos[0];
-            const TLexer::TToken& tokenVariavelIndependente = tokensLidos[2];
+            const std::string variavelDependente = tokensLidos[0].Valor();
+            const std::string variavelIndependente = tokensLidos[2].Valor();
 
-            cabecalhoValido = tokenVarDependente.Valor() != tokenVariavelIndependente.Valor() &&
-                              !TLexer::EhPalavraReservada(tokenVarDependente) &&
-                              !TLexer::EhPalavraReservada(tokenVariavelIndependente);
+            cabecalhoValido = variavelDependente != variavelIndependente &&
+                              !TLexer::EhPalavraReservada(variavelDependente) &&
+                              !TLexer::EhPalavraReservada(variavelIndependente);
+
+            if (cabecalhoValido)
+            {
+                _variavelDependente = variavelDependente;
+                _variavelIndependente = variavelIndependente;
+            }
         }
 
         return cabecalhoValido;
     }
 
+    bool FuncaoInconsistente()
+    {
+        bool inconsistente = false;
+
+        const TLexer::TToken inicioCorpo = _lexer.Proximo();
+
+        TToken tokenCorrente = inicioCorpo;
+        while (token.Tipo() != TLexer::EToken::FIM)
+        {
+            const bool tokenValido = token.Tipo() != TLexer::EToken::IDENTIFICADOR ||
+                                     token.Valor() == _variavelIndependente ||
+                                     TLexer::EhPalavraReservada(token.Valor());
+            if (!tokenValido)
+            {
+                inconsistente = true;
+                break;
+            }
+
+            tokenCorrente = _lexer.Proximo();
+        }
+
+        _lexer.Solicita(inicioCorpo);
+    }
+
     TLexer _lexer;
+
+    std::string _variavelDependente;
+    std::string _variavelIndependente;
 };
 
 // ------------------------------------------------------------------------------------------------
