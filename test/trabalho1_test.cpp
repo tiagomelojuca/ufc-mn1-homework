@@ -183,4 +183,30 @@ TEST(trabalho1_test, deve_ser_capaz_de_calcular_expressoes)
     
     EXPECT_NEAR(FuncoesMatematicas::Calcula("f(x) = 3x^2 * (sen(x) + 7)", 2.0),  94.91, erro);
     EXPECT_NEAR(FuncoesMatematicas::Calcula("f(x) = 3x^2 * (sen(x) + 7)", 3.0), 192.81, erro);
+
+    // Funcao do trabalho, testando valor solicitado de a = 1
+    EXPECT_NEAR(FuncoesMatematicas::Calcula("f(d) = 1*e^d - 4*d^2", 0.0), 1.0, erro);
+    EXPECT_NEAR(FuncoesMatematicas::Calcula("f(d) = 1*e^d - 4*d^2", 0.5), 0.65, erro);
+    EXPECT_NEAR(FuncoesMatematicas::Calcula("f(d) = 1*e^d - 4*d^2", 1.0), -1.28, erro);
+    EXPECT_NEAR(FuncoesMatematicas::Calcula("f(d) = 1*e^d - 4*d^2", 1.5), -4.52, erro);
+    EXPECT_NEAR(FuncoesMatematicas::Calcula("f(d) = 1*e^d - 4*d^2", 2.0), -8.61, erro);
+    EXPECT_NEAR(FuncoesMatematicas::Calcula("f(d) = 1*e^d - 4*d^2", 2.5), -12.82, erro);
+    EXPECT_NEAR(FuncoesMatematicas::Calcula("f(d) = 1*e^d - 4*d^2", 3.0), -15.91, erro);
+    EXPECT_NEAR(FuncoesMatematicas::Calcula("f(d) = 1*e^d - 4*d^2", 3.5), -15.88, erro);
+    EXPECT_NEAR(FuncoesMatematicas::Calcula("f(d) = 1*e^d - 4*d^2", 4.0), -9.4, erro);
+    EXPECT_NEAR(FuncoesMatematicas::Calcula("f(d) = 1*e^d - 4*d^2", 4.5), 9.02, erro);
+    EXPECT_NEAR(FuncoesMatematicas::Calcula("f(d) = 1*e^d - 4*d^2", 5.0), 48.41, erro);
+
+    // Funcao do trabalho, testando valor arbitrario para conferencia de a = 7
+    EXPECT_NEAR(FuncoesMatematicas::Calcula("f(d) = 7*e^d - 4*d^2", 0.0), 7.0, erro);
+    EXPECT_NEAR(FuncoesMatematicas::Calcula("f(d) = 7*e^d - 4*d^2", 0.5), 10.54, erro);
+    EXPECT_NEAR(FuncoesMatematicas::Calcula("f(d) = 7*e^d - 4*d^2", 1.0), 15.03, erro);
+    EXPECT_NEAR(FuncoesMatematicas::Calcula("f(d) = 7*e^d - 4*d^2", 1.5), 22.37, erro);
+    EXPECT_NEAR(FuncoesMatematicas::Calcula("f(d) = 7*e^d - 4*d^2", 2.0), 35.72, erro);
+    EXPECT_NEAR(FuncoesMatematicas::Calcula("f(d) = 7*e^d - 4*d^2", 2.5), 60.28, erro);
+    EXPECT_NEAR(FuncoesMatematicas::Calcula("f(d) = 7*e^d - 4*d^2", 3.0), 104.6, erro);
+    EXPECT_NEAR(FuncoesMatematicas::Calcula("f(d) = 7*e^d - 4*d^2", 3.5), 182.81, erro);
+    EXPECT_NEAR(FuncoesMatematicas::Calcula("f(d) = 7*e^d - 4*d^2", 4.0), 318.19, erro);
+    EXPECT_NEAR(FuncoesMatematicas::Calcula("f(d) = 7*e^d - 4*d^2", 4.5), 549.12, erro);
+    EXPECT_NEAR(FuncoesMatematicas::Calcula("f(d) = 7*e^d - 4*d^2", 5.0), 938.89, erro);
 }
