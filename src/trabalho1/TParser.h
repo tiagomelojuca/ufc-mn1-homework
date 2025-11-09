@@ -460,29 +460,21 @@ private:
 
     bool CorpoValido()
     {
-        if (VariavelInconsistente())
-        {
-            return false;
-        }
-
-        return true;
+        return !TemTokenInvalido() && !ParentesisInvalidos();
     }
 
-    bool VariavelInconsistente()
+    bool TemTokenInvalido()
     {
-        bool inconsistente = false;
+        bool temTokenInvalido = false;
 
         const TLexer::TToken inicioCorpo = _lexer.Proximo();
 
         TLexer::TToken tokenCorrente = inicioCorpo;
         while (tokenCorrente.Tipo() != TLexer::EToken::FIM)
         {
-            const bool tokenValido = tokenCorrente.Tipo() != TLexer::EToken::IDENTIFICADOR ||
-                                     tokenCorrente.Valor() == _variavelIndependente ||
-                                     TLexer::EhPalavraReservada(tokenCorrente.Valor());
-            if (!tokenValido)
+            if (!TokenValido(tokenCorrente))
             {
-                inconsistente = true;
+                temTokenInvalido = true;
                 break;
             }
 
@@ -491,7 +483,57 @@ private:
 
         _lexer.Solicita(inicioCorpo);
 
-        return inconsistente;
+        return temTokenInvalido;
+    }
+
+    bool ParentesisInvalidos()
+    {
+        bool temParentesisInvalidos = false;
+
+        const TLexer::TToken inicioCorpo = _lexer.Proximo();
+
+        size_t aberturas = 0;
+        size_t fechamentos = 0;
+
+        TLexer::TToken tokenAnterior;
+        TLexer::TToken tokenCorrente = inicioCorpo;
+        while (tokenCorrente.Tipo() != TLexer::EToken::FIM)
+        {
+            if (tokenCorrente.Tipo() == TLexer::EToken::ABERTURA_SUBEXPR)
+            {
+                aberturas++;
+            }
+            else if (tokenCorrente.Tipo() == TLexer::EToken::FECHAMENTO_SUBEXPR)
+            {
+                fechamentos++;
+
+                if (tokenAnterior.Tipo() == TLexer::EToken::ABERTURA_SUBEXPR)
+                {
+                    temParentesisInvalidos = true;
+                    break;
+                }
+            }
+
+            tokenAnterior = tokenCorrente;
+            tokenCorrente = _lexer.Proximo();
+        }
+
+        temParentesisInvalidos |= aberturas != fechamentos;
+
+        _lexer.Solicita(inicioCorpo);
+
+        return temParentesisInvalidos;
+    }
+
+    bool TokenValido(const TLexer::TToken& token) const
+    {
+        if (token.Tipo() == TLexer::EToken::IDENTIFICADOR)
+        {
+            return token.Valor() == _variavelIndependente ||
+                   TLexer::EhPalavraReservada(token.Valor());
+        }
+
+        return token.Tipo() != TLexer::EToken::IGUAL;
     }
 
     TLexer _lexer;
