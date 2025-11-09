@@ -499,7 +499,7 @@ private:
         }
 
         // Lida com multiplicacoes implicitas, ex.: 3x
-        TLexer::TToken tipoProximo = Corrente();
+        const TLexer::EToken tipoProximo = Corrente().Tipo();
         if (tipoProximo == TLexer::EToken::IDENTIFICADOR || 
             tipoProximo == TLexer::EToken::NUMERO ||
             tipoProximo == TLexer::EToken::ABERTURA_SUBEXPR)
