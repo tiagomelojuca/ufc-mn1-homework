@@ -598,12 +598,12 @@ private:
         return nullptr;
     }
 
-    bool ExpressaoValida(TLexer& lexer) const
+    bool ExpressaoValida(TLexer& lexer)
     {
         return CabecalhoValido(lexer) && CorpoValido(lexer);
     }
 
-    bool CabecalhoValido(TLexer& lexer) const
+    bool CabecalhoValido(TLexer& lexer)
     {
         std::vector<TLexer::EToken> tokensEsperados;
         tokensEsperados.push_back(TLexer::EToken::IDENTIFICADOR);      // f
@@ -635,6 +635,11 @@ private:
             cabecalhoValido = variavelDependente != variavelIndependente &&
                               !TLexer::EhPalavraReservada(variavelDependente) &&
                               !TLexer::EhPalavraReservada(variavelIndependente);
+
+            if (cabecalhoValido)
+            {
+                _variavelIndependente = variavelIndependente;
+            }
         }
 
         return cabecalhoValido;
