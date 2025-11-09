@@ -464,12 +464,12 @@ private:
 
         const TLexer::TToken inicioCorpo = _lexer.Proximo();
 
-        TToken tokenCorrente = inicioCorpo;
-        while (token.Tipo() != TLexer::EToken::FIM)
+        TLexer::TToken tokenCorrente = inicioCorpo;
+        while (tokenCorrente.Tipo() != TLexer::EToken::FIM)
         {
-            const bool tokenValido = token.Tipo() != TLexer::EToken::IDENTIFICADOR ||
-                                     token.Valor() == _variavelIndependente ||
-                                     TLexer::EhPalavraReservada(token.Valor());
+            const bool tokenValido = tokenCorrente.Tipo() != TLexer::EToken::IDENTIFICADOR ||
+                                     tokenCorrente.Valor() == _variavelIndependente ||
+                                     TLexer::EhPalavraReservada(tokenCorrente.Valor());
             if (!tokenValido)
             {
                 inconsistente = true;
@@ -480,6 +480,8 @@ private:
         }
 
         _lexer.Solicita(inicioCorpo);
+
+        return inconsistente;
     }
 
     TLexer _lexer;
