@@ -168,7 +168,7 @@ private:
 
         const char chCorrente = Corrente();
 
-        if (chCorrente == '\0')
+        if (EhCaractereFimCadeia(chCorrente))
         {
             return ProcessaFim();
         }
@@ -324,6 +324,10 @@ private:
         return pos < _expr.length() ? _expr[pos] : '\0';
     }
 
+    bool EhCaractereFimCadeia(char ch) const
+    {
+        return ch == '\0';
+    }
     bool EhCaractereAlfabetico(char ch) const
     {
         return StringContemCaractere(CARACTERES_ALFABETICOS_MINUSCULOS, ch) ||
