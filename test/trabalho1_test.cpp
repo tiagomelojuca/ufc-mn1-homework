@@ -215,16 +215,16 @@ TEST(trabalho1_test, deve_ser_capaz_de_calcular_expressoes)
 
 TEST(trabalho1_test, deve_ser_capaz_de_gerar_strings_a_partir_de_modelo)
 {
-    const std::string str1 = FuncoesGerais::InstanciaStringModelo("Foo");
-    const std::string str2 = FuncoesGerais::InstanciaStringModelo("Foo%1", "Bar");
-    const std::string str3 = FuncoesGerais::InstanciaStringModelo("Foo%1%2", "Bar", "Baz");
-    const std::string str4 = FuncoesGerais::InstanciaStringModelo("%1%2%3", "Foo", "Bar", "Baz");
-    const std::string str5 = FuncoesGerais::InstanciaStringModelo("%1 %2 %3", "Foo", "Bar", "Baz");
+    const std::string str1 = FuncoesGerais::InstanciaModelo("Foo");
+    const std::string str2 = FuncoesGerais::InstanciaModelo("Foo$", "Bar");
+    const std::string str3 = FuncoesGerais::InstanciaModelo("Foo$$", "Bar", "Baz");
+    const std::string str4 = FuncoesGerais::InstanciaModelo("$", "Foo", "Bar", "Baz");
+    const std::string str5 = FuncoesGerais::InstanciaModelo("$ $ $", "Foo", "Bar", "Baz");
 
     EXPECT_STREQ(str1.c_str(), "Foo");
     EXPECT_STREQ(str2.c_str(), "FooBar");
     EXPECT_STREQ(str3.c_str(), "FooBarBaz");
-    EXPECT_STREQ(str4.c_str(), "FooBarBaz");
+    EXPECT_STREQ(str4.c_str(), "Foo");
     EXPECT_STREQ(str5.c_str(), "Foo Bar Baz");
 }
 
