@@ -3,6 +3,7 @@
 
 #include <string>
 
+#include "FuncoesGerais.h"
 #include "FuncoesMatematicas.h"
 
 // ------------------------------------------------------------------------------------------------
@@ -20,13 +21,7 @@ public:
 private:
     std::string GeraExpressaoDinamicamente(double a) const
     {
-        std::string expr;
-
-        expr += "f(d) = ";
-        expr += std::to_string(a);
-        expr += "*e^d - 4*d^2";
-
-        return expr;
+        return FuncoesGerais::InstanciaModelo("f(d) = $*e^d - 4*d^2", std::to_string(a).c_str());
     }
 };
 
