@@ -11,8 +11,11 @@
 class TCalculoOscilacoesSismicas
 {
 public:
-    static constexpr const char* modeloFuncao = "f(d) = $*e^d - 4*d^2";
-    static constexpr const char* modeloDerivadaFuncao = "f'(d) = $*e^d - 8*d";
+    static constexpr const char* modeloFuncaoOriginal = "f(d) = $*e^d - 4*d^2";
+    static constexpr const char* modeloDerivadaFuncaoOriginal = "f'(d) = $*e^d - 8*d";
+
+    static constexpr const char* modeloFuncaoAplicacaoImagem = "f(d) = $*e^d - 4*d^2 - 0.7";
+    static constexpr const char* modeloDerivadaFuncaoAplicacaoImagem = "f'(d) = $*e^d - 8*d";
 
     TCalculoOscilacoesSismicas() = default;
 
@@ -24,12 +27,12 @@ public:
 private:
     std::string GeraExpressaoDinamicamente(double a) const
     {
-        return FuncoesGerais::InstanciaModelo(modeloFuncao, std::to_string(a).c_str());
+        return FuncoesGerais::InstanciaModelo(modeloFuncaoAplicacaoImagem, std::to_string(a).c_str());
     }
 
     std::string GeraDerivadaDinamicamente(double a) const
     {
-        return FuncoesGerais::InstanciaModelo(modeloDerivadaFuncao, std::to_string(a).c_str());
+        return FuncoesGerais::InstanciaModelo(modeloDerivadaFuncaoAplicacaoImagem, std::to_string(a).c_str());
     }
 };
 

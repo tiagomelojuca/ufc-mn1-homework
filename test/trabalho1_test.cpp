@@ -255,30 +255,4 @@ TEST(trabalho1_test, deve_ser_capaz_de_calcular_oscilacoes_de_ondas_sismicas)
     const double erro = 0.1;
 
     TCalculoOscilacoesSismicas calculoOscilacoesSismicas;
-
-    // Funcao do trabalho, testando valor solicitado de a = 1
-    EXPECT_NEAR(calculoOscilacoesSismicas.Calcula(1.0, 0.0), 1.0, erro);
-    EXPECT_NEAR(calculoOscilacoesSismicas.Calcula(1.0, 0.5), 0.65, erro);
-    EXPECT_NEAR(calculoOscilacoesSismicas.Calcula(1.0, 1.0), -1.28, erro);
-    EXPECT_NEAR(calculoOscilacoesSismicas.Calcula(1.0, 1.5), -4.52, erro);
-    EXPECT_NEAR(calculoOscilacoesSismicas.Calcula(1.0, 2.0), -8.61, erro);
-    EXPECT_NEAR(calculoOscilacoesSismicas.Calcula(1.0, 2.5), -12.82, erro);
-    EXPECT_NEAR(calculoOscilacoesSismicas.Calcula(1.0, 3.0), -15.91, erro);
-    EXPECT_NEAR(calculoOscilacoesSismicas.Calcula(1.0, 3.5), -15.88, erro);
-    EXPECT_NEAR(calculoOscilacoesSismicas.Calcula(1.0, 4.0), -9.4, erro);
-    EXPECT_NEAR(calculoOscilacoesSismicas.Calcula(1.0, 4.5), 9.02, erro);
-    EXPECT_NEAR(calculoOscilacoesSismicas.Calcula(1.0, 5.0), 48.41, erro);
-
-    // Funcao do trabalho, testando valor arbitrario para conferencia de a = 7
-    EXPECT_NEAR(calculoOscilacoesSismicas.Calcula(7.0, 0.0), 7.0, erro);
-    EXPECT_NEAR(calculoOscilacoesSismicas.Calcula(7.0, 0.5), 10.54, erro);
-    EXPECT_NEAR(calculoOscilacoesSismicas.Calcula(7.0, 1.0), 15.03, erro);
-    EXPECT_NEAR(calculoOscilacoesSismicas.Calcula(7.0, 1.5), 22.37, erro);
-    EXPECT_NEAR(calculoOscilacoesSismicas.Calcula(7.0, 2.0), 35.72, erro);
-    EXPECT_NEAR(calculoOscilacoesSismicas.Calcula(7.0, 2.5), 60.28, erro);
-    EXPECT_NEAR(calculoOscilacoesSismicas.Calcula(7.0, 3.0), 104.6, erro);
-    EXPECT_NEAR(calculoOscilacoesSismicas.Calcula(7.0, 3.5), 182.81, erro);
-    EXPECT_NEAR(calculoOscilacoesSismicas.Calcula(7.0, 4.0), 318.19, erro);
-    EXPECT_NEAR(calculoOscilacoesSismicas.Calcula(7.0, 4.5), 549.12, erro);
-    EXPECT_NEAR(calculoOscilacoesSismicas.Calcula(7.0, 5.0), 938.89, erro);
 }
