@@ -23,10 +23,15 @@ public:
     {
         double xa = x0; // x anterior
         double xi = x1;
-        double fx = DBL_MAX;
+        double fxi = f->Resolve(xi);
+        double fxa = f->Resolve(xa);
         do {
-            xi = (xa * f->Resolve(xi) - xi * f->Resolve(xa)) / (f->Resolve(xi) - f->Resolve(xa));
-        } while (fabs(f->Resolve(xi)) > errAdm);
+            const double xn = (xa * fxi - xi * fxa) / (fxi - fxa);
+            xa = xi;
+            fxa = fxi;
+            xi = xn;
+            fxi = f->Resolve(xi);
+        } while (fabs(fxi) > errAdm);
 
         return xi;
     }
