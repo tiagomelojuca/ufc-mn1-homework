@@ -21,7 +21,7 @@ public:
     ) :
         TCalculoRaizesNewtonRaphson(f, f_, x0, err)
     {
-        f_x0 = TCalculoRaizesNewtonRaphson::f_->Resolve(x0);
+        f_x0 = TCalculoRaizesNewtonRaphson::f_(x0);
     }
     
     TCalculoRaizesNewtonModificado(const TCalculoRaizesNewtonModificado&) = delete;
@@ -29,7 +29,7 @@ public:
     TCalculoRaizesNewtonModificado& operator=(const TCalculoRaizesNewtonModificado&) = delete;
 
 protected:
-    double DenominadorFuncaoIteracao(double x) const override
+    double DenominadorFuncaoIteracao(double x) override
     {
         return f_x0;
     }

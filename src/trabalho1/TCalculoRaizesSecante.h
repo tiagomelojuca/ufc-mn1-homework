@@ -19,18 +19,18 @@ public:
     {
     }
 
-    double Busca() const override
+    double Busca() override
     {
         double xa = x0; // x anterior
         double xi = x1;
-        double fxi = f->Resolve(xi);
-        double fxa = f->Resolve(xa);
+        double fxi = f(xi);
+        double fxa = f(xa);
         do {
             const double xn = (xa * fxi - xi * fxa) / (fxi - fxa);
             xa = xi;
             fxa = fxi;
             xi = xn;
-            fxi = f->Resolve(xi);
+            fxi = f(xi);
         } while (fabs(fxi) > errAdm);
 
         return xi;

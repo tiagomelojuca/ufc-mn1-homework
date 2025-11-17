@@ -5,7 +5,7 @@
 
 #include <cfloat>
 
-#include "FabricacaoArvoreSintatica.h"
+#include "TFuncao.h"
 
 // ------------------------------------------------------------------------------------------------
 
@@ -19,7 +19,7 @@ public:
         double err
     ) :
         TCalculoRaizes(f, x0, err),
-        f_(FabricacaoArvoreSintatica::Fabrica(f_))
+        f_(f_)
     {
     }
     
@@ -27,30 +27,25 @@ public:
     TCalculoRaizesNewtonRaphson(TCalculoRaizesNewtonRaphson&&) = delete;
     TCalculoRaizesNewtonRaphson& operator=(const TCalculoRaizesNewtonRaphson&) = delete;
 
-    virtual ~TCalculoRaizesNewtonRaphson()
-    {
-        delete f_;
-    }
-
-    double Busca() const override
+    double Busca() override
     {
         double xi = x0;
-        double fx = f->Resolve(xi);
+        double fx = f(xi);
         do {
             xi = xi - fx / DenominadorFuncaoIteracao(xi);
-            fx = f->Resolve(xi);
+            fx = f(xi);
         } while (fabs(fx) > errAdm);
 
         return xi;
     }
 
 protected:
-    virtual double DenominadorFuncaoIteracao(double x) const
+    virtual double DenominadorFuncaoIteracao(double x)
     {
-        return f_->Resolve(x);
+        return f_(x);
     }
 
-    TArvoreSintatica* f_ = nullptr;
+    TFuncao f_;
 };
 
 // ------------------------------------------------------------------------------------------------

@@ -3,6 +3,8 @@
 
 #include <string>
 
+#include "TFuncao.h"
+
 // ------------------------------------------------------------------------------------------------
 
 class TCalculoRaizes
@@ -15,7 +17,7 @@ public:
     ) :
         x0(x0),
         errAdm(err),
-        f(FabricacaoArvoreSintatica::Fabrica(f))
+        f(f)
     {
     }
 
@@ -23,18 +25,13 @@ public:
     TCalculoRaizes(TCalculoRaizes&&) = delete;
     TCalculoRaizes& operator=(const TCalculoRaizes&) = delete;
 
-    virtual ~TCalculoRaizes()
-    {
-        delete f;
-    }
-
-    virtual double Busca() const = 0;
+    virtual double Busca() = 0;
 
 protected:
     double x0 = 0.0;
     double errAdm = 0.0;
 
-    TArvoreSintatica* f = nullptr;
+    TFuncao f;
 };
 
 // ------------------------------------------------------------------------------------------------
