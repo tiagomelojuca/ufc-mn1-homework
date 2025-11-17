@@ -35,10 +35,10 @@ public:
     double Busca() const override
     {
         double xi = x0;
-        double fx = DBL_MAX;
+        double fx = f->Resolve(xi);
         do {
-            fx = f->Resolve(xi);
             xi = xi - fx / DenominadorFuncaoIteracao(xi);
+            fx = f->Resolve(xi);
         } while (fabs(fx) > errAdm);
 
         return xi;
