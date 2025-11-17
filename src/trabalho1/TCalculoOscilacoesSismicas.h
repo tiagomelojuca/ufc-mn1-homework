@@ -3,9 +3,12 @@
 
 #include <string>
 
+#include <memory>
+
 #include "FuncoesGerais.h"
 #include "TCalculoRaizesNewtonRaphson.h"
 #include "TCalculoRaizesNewtonModificado.h"
+#include "TCalculoRaizesSecante.h"
 
 // ------------------------------------------------------------------------------------------------
 
@@ -16,32 +19,45 @@ public:
 
     TCalculoOscilacoesSismicas() = default;
 
-    double Calcula(double a, EMetodoCalculo metodo) const
+    double Calcula(EMetodoCalculo metodo, double a) const
     {
+        const double x0 = 0.5;
+        const double x1 = 0.6;
+        const double errAdm = 0.0001;
+
         const std::string f = GeraExpressaoDinamicamente(a);
         const std::string f_ = GeraDerivadaDinamicamente(a);
 
-        if (metodo == EMetodoCalculo::NEWTON_RAPHSON)
-        {
-            TCalculoRaizesNewtonRaphson calculo(f, f_, 0.5, 0.0001);
-            return calculo.Busca();
-        }
-
-        if (metodo == EMetodoCalculo::NEWTON_MODIFICADO)
-        {
-            TCalculoRaizesNewtonModificado calculo(f, f_, 0.5, 0.0001);
-            return calculo.Busca();
-        }
-
-        return 0.0;
+        return FabricaCalculo(metodo, f, f_, x0, x1, errAdm)->Busca();
     }
 
 private:
-    static constexpr const char* modeloFuncaoOriginal = "f(d) = $*e^d - 4*d^2";
-    static constexpr const char* modeloDerivadaFuncaoOriginal = "f'(d) = $*e^d - 8*d";
+    std::unique_ptr<TCalculoRaizes> FabricaCalculo(
+        EMetodoCalculo metodo,
+        const std::string& f,
+        const std::string& f_,
+        double x0,
+        double x1,
+        double errAdm
+    ) const
+    {
+        TCalculoRaizes* calculo = nullptr;
 
-    static constexpr const char* modeloFuncaoAplicacaoImagem = "f(d) = $*e^d - 4*d^2 - 0.7";
-    static constexpr const char* modeloDerivadaFuncaoAplicacaoImagem = "f'(d) = $*e^d - 8*d";
+        if (metodo == EMetodoCalculo::NEWTON_RAPHSON)
+        {
+            calculo = new TCalculoRaizesNewtonRaphson(f, f_, x0, errAdm);
+        }
+        else if (metodo == EMetodoCalculo::NEWTON_MODIFICADO)
+        {
+            calculo = new TCalculoRaizesNewtonModificado(f, f_, x0, errAdm);
+        }
+        else
+        {
+            calculo = new TCalculoRaizesSecante(f, x0, x1, errAdm);
+        }
+
+        return std::move(std::unique_ptr<TCalculoRaizes>(calculo));
+    }
 
     std::string GeraExpressaoDinamicamente(double a) const
     {
@@ -52,6 +68,12 @@ private:
     {
         return FuncoesGerais::InstanciaModelo(modeloDerivadaFuncaoAplicacaoImagem, std::to_string(a).c_str());
     }
+
+    static constexpr const char* modeloFuncaoOriginal = "f(d) = $*e^d - 4*d^2";
+    static constexpr const char* modeloDerivadaFuncaoOriginal = "f'(d) = $*e^d - 8*d";
+
+    static constexpr const char* modeloFuncaoAplicacaoImagem = "f(d) = $*e^d - 4*d^2 - 0.7";
+    static constexpr const char* modeloDerivadaFuncaoAplicacaoImagem = "f'(d) = $*e^d - 8*d";
 };
 
 // ------------------------------------------------------------------------------------------------
