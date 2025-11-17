@@ -2,8 +2,10 @@
 #define TCALCULOOSCILACOESSISMICAS_H_
 
 #include <string>
-
+#include <sstream>
 #include <memory>
+#include <vector>
+#include <iomanip>
 
 #include "FuncoesGerais.h"
 #include "TCalculoRaizesNewtonRaphson.h"
@@ -18,6 +20,61 @@ public:
     enum class EMetodoCalculo { NEWTON_RAPHSON, NEWTON_MODIFICADO, SECANTE };
 
     TCalculoOscilacoesSismicas() = default;
+
+    std::string Sintetiza(double a) const
+    {
+        std::stringstream ss;
+
+        const double dNR = Calcula(EMetodoCalculo::NEWTON_RAPHSON, a);
+        const double dNM = Calcula(EMetodoCalculo::NEWTON_MODIFICADO, a);
+        const double dSc = Calcula(EMetodoCalculo::SECANTE, a);
+
+        ss << "> " << GeraExpressaoDinamicamente(a) << std::endl
+           << "    NEWTON-RAPHSON    : " << dNR << std::endl
+           << "    NEWTON-MODIFICADO : " << dNM << std::endl
+           << "    SECANTE           : " << dSc << std::endl;
+
+        return ss.str();
+    }
+
+    std::string Sintetiza() const
+    {
+        std::vector<double> entradas;
+        entradas.push_back(1.0);
+        entradas.push_back(2.0);
+        entradas.push_back(3.0);
+
+        std::stringstream ss;
+
+            ss << "| " << std::right
+               << std::setw(10) << std::fixed << std::setprecision(10) << "a" << " | "
+               << std::setw(10) << std::fixed << std::setprecision(10) << "d0" << " | "
+               << std::setw(10) << std::fixed << std::setprecision(10) << "d1" << " | "
+               << std::setw(10) << std::fixed << std::setprecision(10) << "err" << " | "
+               << std::setw(10) << std::fixed << std::setprecision(10) << "d_nr" << " | "
+               << std::setw(10) << std::fixed << std::setprecision(10) << "d_nm" << " | "
+               << std::setw(10) << std::fixed << std::setprecision(10) << "d_sc" << " |"
+               << std::endl;
+
+        for (double a : entradas)
+        {
+            const double dNR = Calcula(EMetodoCalculo::NEWTON_RAPHSON, a);
+            const double dNM = Calcula(EMetodoCalculo::NEWTON_MODIFICADO, a);
+            const double dSc = Calcula(EMetodoCalculo::SECANTE, a);
+
+            ss << "| " << std::right
+               << std::setw(8) << std::fixed << std::setprecision(8) << a << " | "
+               << std::setw(8) << std::fixed << std::setprecision(8) << 0.5 << " | "
+               << std::setw(8) << std::fixed << std::setprecision(8) << 0.6 << " | "
+               << std::setw(8) << std::fixed << std::setprecision(8) << 0.0001 << " | "
+               << std::setw(8) << std::fixed << std::setprecision(8) << dNR << " | "
+               << std::setw(8) << std::fixed << std::setprecision(8) << dNM << " | "
+               << std::setw(8) << std::fixed << std::setprecision(8) << dSc << " |"
+               << std::endl;
+        }
+
+        return ss.str();
+    }
 
     double Calcula(EMetodoCalculo metodo, double a) const
     {

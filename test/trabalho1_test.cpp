@@ -257,11 +257,5 @@ TEST(trabalho1_test, deve_ser_capaz_de_calcular_oscilacoes_de_ondas_sismicas)
 
     TCalculoOscilacoesSismicas calculoOscilacoesSismicas;
 
-    auto x1 = calculoOscilacoesSismicas.Calcula(TCalculoOscilacoesSismicas::EMetodoCalculo::NEWTON_RAPHSON, 1.0);
-    auto x2 = calculoOscilacoesSismicas.Calcula(TCalculoOscilacoesSismicas::EMetodoCalculo::NEWTON_MODIFICADO, 1.0);
-    auto x3 = calculoOscilacoesSismicas.Calcula(TCalculoOscilacoesSismicas::EMetodoCalculo::SECANTE, 1.0);
-
-    std::cout << "NEWTON-RAPHSON    : " << x1 << std::endl;
-    std::cout << "NEWTON-MODIFICADO : " << x2 << std::endl;
-    std::cout << "SECANTE           : " << x3 << std::endl;
+    std::cout << calculoOscilacoesSismicas.Sintetiza();
 }
