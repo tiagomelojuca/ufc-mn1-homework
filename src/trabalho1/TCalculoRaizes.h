@@ -3,6 +3,7 @@
 
 #include <string>
 
+#include "FuncoesMatematicas.h"
 #include "TFuncao.h"
 
 // ------------------------------------------------------------------------------------------------
@@ -27,9 +28,27 @@ public:
 
     virtual double Busca() = 0;
 
+    size_t NumeroIteracoesRealizadas() const
+    {
+        return nIteracoes;
+    }
+
+    void NumeroMaximoIteracoes(size_t n)
+    {
+        maxIteracoes = n;
+    }
+
+    double Sentinela() const
+    {
+        return FuncoesMatematicas::Sentinela();
+    }
+
 protected:
     double x0 = 0.0;
     double errAdm = 0.0;
+
+    size_t nIteracoes = 0u;
+    size_t maxIteracoes = 10u;
 
     TFuncao f;
 };

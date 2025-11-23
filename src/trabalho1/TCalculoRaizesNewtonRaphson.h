@@ -34,9 +34,9 @@ public:
         do {
             xi = xi - fx / DenominadorFuncaoIteracao(xi);
             fx = f(xi);
-        } while (fabs(fx) > errAdm);
+        } while (++nIteracoes < maxIteracoes && fabs(fx) > errAdm);
 
-        return xi;
+        return fabs(fx) <= errAdm ? xi : Sentinela();
     }
 
 protected:

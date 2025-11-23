@@ -31,9 +31,9 @@ public:
             fxa = fxi;
             xi = xn;
             fxi = f(xi);
-        } while (fabs(fxi) > errAdm);
+        } while (++nIteracoes < maxIteracoes && fabs(fxi) > errAdm);
 
-        return xi;
+        return fabs(fxi) <= errAdm ? xi : Sentinela();
     }
 
 protected:

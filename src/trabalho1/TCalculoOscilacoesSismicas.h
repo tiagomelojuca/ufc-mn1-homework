@@ -64,9 +64,9 @@ public:
 
         for (TEntradaCalculo e : entradas)
         {
-            const double dNR = Calcula(EMetodoCalculo::NEWTON_RAPHSON, e);
-            const double dNM = Calcula(EMetodoCalculo::NEWTON_MODIFICADO, e);
-            const double dSc = Calcula(EMetodoCalculo::SECANTE, e);
+            const std::string dNR = StrCalc(EMetodoCalculo::NEWTON_RAPHSON, e);
+            const std::string dNM = StrCalc(EMetodoCalculo::NEWTON_MODIFICADO, e);
+            const std::string dSc = StrCalc(EMetodoCalculo::SECANTE, e);
 
             ss << "| " << std::right
                << std::setw(8) << std::fixed << std::setprecision(8) << e.a << " | "
@@ -83,6 +83,17 @@ public:
     }
 
 private:
+    std::string StrCalc(EMetodoCalculo m, TEntradaCalculo e) const
+    {
+        const double d = Calcula(m, e);
+        if (d == FuncoesMatematicas::Sentinela())
+        {
+            return "NaN";
+        }
+
+        return std::to_string(d);
+    }
+
     double Calcula(EMetodoCalculo metodo, TEntradaCalculo entrada) const
     {
         const double x1 = EstimaX1(entrada.x0);
