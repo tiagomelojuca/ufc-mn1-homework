@@ -5,7 +5,6 @@
 #include <sstream>
 #include <memory>
 #include <vector>
-#include <iomanip>
 
 #include "FuncoesGerais.h"
 #include "TCalculoRaizesNewtonRaphson.h"
@@ -52,30 +51,34 @@ public:
         entradas.push_back({ 3.0, 0.5, 0.0001 });
 
         std::stringstream ss;
-        ss << "| " << std::right
-            << std::setw(10) << std::fixed << std::setprecision(10) << "a" << " | "
-            << std::setw(10) << std::fixed << std::setprecision(10) << "d0" << " | "
-            << std::setw(10) << std::fixed << std::setprecision(10) << "d1" << " | "
-            << std::setw(10) << std::fixed << std::setprecision(10) << "err" << " | "
-            << std::setw(10) << std::fixed << std::setprecision(10) << "d_nr" << " | "
-            << std::setw(10) << std::fixed << std::setprecision(10) << "d_nm" << " | "
-            << std::setw(10) << std::fixed << std::setprecision(10) << "d_sc" << " |"
+        ss << "|"
+            << Formata("a") << "|"
+            << Formata("d0") << "|"
+            << Formata("d1") << "|"
+            << Formata("err") << "|"
+            << Formata("d_nr") << "|"
+            << Formata("d_nm") << "|"
+            << Formata("d_sc") << "|"
             << std::endl;
+
+        const size_t nCols = FuncoesGerais::TamanhoLinha(7u, 7u);
+        for (size_t i = 0; i < nCols; i++) ss << '-';
+        ss << std::endl;
 
         for (TEntradaCalculo e : entradas)
         {
-            const std::string dNR = StrCalc(EMetodoCalculo::NEWTON_RAPHSON, e);
-            const std::string dNM = StrCalc(EMetodoCalculo::NEWTON_MODIFICADO, e);
-            const std::string dSc = StrCalc(EMetodoCalculo::SECANTE, e);
+            const double dNR = Calcula(EMetodoCalculo::NEWTON_RAPHSON, e);
+            const double dNM = Calcula(EMetodoCalculo::NEWTON_MODIFICADO, e);
+            const double dSc = Calcula(EMetodoCalculo::SECANTE, e);
 
-            ss << "| " << std::right
-               << std::setw(8) << std::fixed << std::setprecision(8) << e.a << " | "
-               << std::setw(8) << std::fixed << std::setprecision(8) << e.x0 << " | "
-               << std::setw(8) << std::fixed << std::setprecision(8) << EstimaX1(e.x0) << " | "
-               << std::setw(8) << std::fixed << std::setprecision(8) << e.err << " | "
-               << std::setw(8) << std::fixed << std::setprecision(8) << dNR << " | "
-               << std::setw(8) << std::fixed << std::setprecision(8) << dNM << " | "
-               << std::setw(8) << std::fixed << std::setprecision(8) << dSc << " |"
+            ss << "|"
+               << Formata(e.a) << "|"
+               << Formata(e.x0) << "|"
+               << Formata(EstimaX1(e.x0)) << "|"
+               << Formata(e.err) << "|"
+               << Formata(dNR) << "|"
+               << Formata(dNM) << "|"
+               << Formata(dSc) << "|"
                << std::endl;
         }
 
@@ -83,15 +86,17 @@ public:
     }
 
 private:
-    std::string StrCalc(EMetodoCalculo m, TEntradaCalculo e) const
+    std::string Formata(const std::string& str) const
     {
-        const double d = Calcula(m, e);
-        if (d == FuncoesMatematicas::Sentinela())
-        {
-            return "NaN";
-        }
+        return FuncoesGerais::NormalizaCelula(str, 7u);
+    }
+    std::string Formata(double val) const
+    {
+        const std::string resultado = val != FuncoesMatematicas::Sentinela()
+            ? std::to_string(val)
+            : "NaN";
 
-        return std::to_string(d);
+        return FuncoesGerais::NormalizaCelula(resultado, 7u);
     }
 
     double Calcula(EMetodoCalculo metodo, TEntradaCalculo entrada) const
