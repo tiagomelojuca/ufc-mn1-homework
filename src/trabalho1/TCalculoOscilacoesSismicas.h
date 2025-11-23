@@ -10,6 +10,7 @@
 #include "TCalculoRaizesNewtonRaphson.h"
 #include "TCalculoRaizesNewtonModificado.h"
 #include "TCalculoRaizesSecante.h"
+#include "TTabela.h"
 
 // ------------------------------------------------------------------------------------------------
 
@@ -50,39 +51,37 @@ public:
         entradas.push_back({ 2.0, 1.2, 0.0001 });
         entradas.push_back({ 3.0, 0.5, 0.0001 });
 
-        std::stringstream ss;
-        ss << "|"
-            << Formata("a") << "|"
-            << Formata("d0") << "|"
-            << Formata("d1") << "|"
-            << Formata("err") << "|"
-            << Formata("d_nr") << "|"
-            << Formata("d_nm") << "|"
-            << Formata("d_sc") << "|"
-            << std::endl;
+        TTabela t { entradas.size() + 1, 7u };
+        t[1][1] = "a";
+        t[1][2] = "d0";
+        t[1][3] = "d1";
+        t[1][4] = "err";
+        t[1][5] = "d_nr";
+        t[1][6] = "d_nm";
+        t[1][7] = "d_sc";
 
-        const size_t nCols = FuncoesGerais::TamanhoLinha(7u, 7u);
-        for (size_t i = 0; i < nCols; i++) ss << '-';
-        ss << std::endl;
+        // const size_t nCols = FuncoesGerais::TamanhoLinha(7u, 7u);
+        // for (size_t i = 0; i < nCols; i++) ss << '-';
+        // ss << std::endl;
 
-        for (TEntradaCalculo e : entradas)
+        for (size_t i = 2; i <= entradas.size() + 1; i++)
         {
+            const TEntradaCalculo& e = entradas[i - 2];
+
             const double dNR = Calcula(EMetodoCalculo::NEWTON_RAPHSON, e);
             const double dNM = Calcula(EMetodoCalculo::NEWTON_MODIFICADO, e);
             const double dSc = Calcula(EMetodoCalculo::SECANTE, e);
 
-            ss << "|"
-               << Formata(e.a) << "|"
-               << Formata(e.x0) << "|"
-               << Formata(EstimaX1(e.x0)) << "|"
-               << Formata(e.err) << "|"
-               << Formata(dNR) << "|"
-               << Formata(dNM) << "|"
-               << Formata(dSc) << "|"
-               << std::endl;
+            t[i][1] = std::to_string(e.a);
+            t[i][2] = std::to_string(e.x0);
+            t[i][3] = std::to_string(EstimaX1(e.x0));
+            t[i][4] = std::to_string(e.err);
+            t[i][5] = std::to_string(dNR);
+            t[i][6] = std::to_string(dNM);
+            t[i][7] = std::to_string(dSc);
         }
 
-        return ss.str();
+        return t.Gera();
     }
 
 private:
