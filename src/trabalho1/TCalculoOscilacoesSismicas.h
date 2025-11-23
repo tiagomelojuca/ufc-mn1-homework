@@ -51,18 +51,16 @@ public:
         entradas.push_back({ 2.0, 1.2, 0.0001 });
         entradas.push_back({ 3.0, 0.5, 0.0001 });
 
-        TTabela t { entradas.size() + 1, 7u };
-        t[1][1] = "a";
-        t[1][2] = "d0";
-        t[1][3] = "d1";
-        t[1][4] = "err";
-        t[1][5] = "d_nr";
-        t[1][6] = "d_nm";
-        t[1][7] = "d_sc";
+        TTabela t { entradas.size() + 1, 7u, 8u };
+        t.DefineCabecalho(1);
 
-        // const size_t nCols = FuncoesGerais::TamanhoLinha(7u, 7u);
-        // for (size_t i = 0; i < nCols; i++) ss << '-';
-        // ss << std::endl;
+        t.Define(1, 1, "a");
+        t.Define(1, 2, "d0");
+        t.Define(1, 3, "d1");
+        t.Define(1, 4, "err");
+        t.Define(1, 5, "d_nr");
+        t.Define(1, 6, "d_nm");
+        t.Define(1, 7, "d_sc");
 
         for (size_t i = 2; i <= entradas.size() + 1; i++)
         {
@@ -72,32 +70,19 @@ public:
             const double dNM = Calcula(EMetodoCalculo::NEWTON_MODIFICADO, e);
             const double dSc = Calcula(EMetodoCalculo::SECANTE, e);
 
-            t[i][1] = std::to_string(e.a);
-            t[i][2] = std::to_string(e.x0);
-            t[i][3] = std::to_string(EstimaX1(e.x0));
-            t[i][4] = std::to_string(e.err);
-            t[i][5] = std::to_string(dNR);
-            t[i][6] = std::to_string(dNM);
-            t[i][7] = std::to_string(dSc);
+            t.Define(i, 1, e.a);
+            t.Define(i, 2, e.x0);
+            t.Define(i, 3, EstimaX1(e.x0));
+            t.Define(i, 4, e.err);
+            t.Define(i, 5, dNR);
+            t.Define(i, 6, dNM);
+            t.Define(i, 7, dSc);
         }
 
         return t.Gera();
     }
 
 private:
-    std::string Formata(const std::string& str) const
-    {
-        return FuncoesGerais::NormalizaCelula(str, 7u);
-    }
-    std::string Formata(double val) const
-    {
-        const std::string resultado = val != FuncoesMatematicas::Sentinela()
-            ? std::to_string(val)
-            : "NaN";
-
-        return FuncoesGerais::NormalizaCelula(resultado, 7u);
-    }
-
     double Calcula(EMetodoCalculo metodo, TEntradaCalculo entrada) const
     {
         const double x1 = EstimaX1(entrada.x0);
