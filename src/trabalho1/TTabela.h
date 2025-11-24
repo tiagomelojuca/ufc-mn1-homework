@@ -92,7 +92,7 @@ private:
 
     std::string Formata(double val) const
     {
-        return val != FuncoesMatematicas::Sentinela() ? std::to_string(val) : "NaN";
+        return val != FuncoesMatematicas::Sentinela() ? std::to_string(val) : "nan";
     }
 
     std::string NormalizaCelula(double val, size_t tam = 5u) const
