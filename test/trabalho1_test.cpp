@@ -1,5 +1,7 @@
 #include <gtest/gtest.h>
 
+#include <sstream>
+
 #include "trabalho1/CalculoOscilacoesSismicas.h"
 #include "trabalho1/FuncoesGerais.h"
 #include "trabalho1/FuncoesMatematicas.h"
@@ -283,7 +285,26 @@ TEST(trabalho1_test, deve_ser_capaz_de_imprimir_resultados)
     impressora.Adiciona(2.0, 1.2, 0.0001);
     impressora.Adiciona(3.0, 0.5, 0.0001);
 
-    std::cout << impressora.Sintetiza();
+    std::stringstream ss;
+    ss << "|        a |       d0 |       d1 |  err_adm |     d_nr |"
+       << "   err_nr |     d_nm |   err_nm |     d_sc |   err_sc |"
+       << std::endl
+       << "-------------------------------------------------------"
+       << "-"
+       << "-------------------------------------------------------"
+       << std::endl
+       << "| 1.000000 | 0.500000 | 0.600000 | 0.000100 | 0.477507 |"
+       << " 0.000001 | 0.477548 | 0.000091 | 0.477509 | 0.000005 |"
+       << std::endl
+       << "| 2.000000 | 1.200000 | 1.300000 | 0.000100 | 1.260146 |"
+       << " 0.000000 | 1.260128 | 0.000053 | 1.260144 | 0.000006 |"
+       << std::endl
+       << "| 3.000000 | 0.500000 | 0.600000 | 0.000100 | -0.52033 |"
+       << " 0.000000 |      nan |      nan | -0.52032 | 0.000012 |"
+       << std::endl;
+    const std::string quadroResumoEsperado = ss.str();
+
+    EXPECT_STREQ(impressora.Sintetiza().c_str(), quadroResumoEsperado.c_str());
 }
 
 // ------------------------------------------------------------------------------------------------
