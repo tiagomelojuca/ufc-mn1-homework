@@ -20,7 +20,7 @@ int main()
 
         if (a != 0.0)
         {
-            impressora.Adiciona(a, 0.0, err);
+            impressora.Adiciona(a, CalculoOscilacoesSismicas::EstimaX0(a), err);
             i++;
         }
     } while (a != 0.0);
