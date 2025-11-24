@@ -1,10 +1,13 @@
 #include <gtest/gtest.h>
 
+#include "trabalho1/CalculoOscilacoesSismicas.h"
 #include "trabalho1/FuncoesGerais.h"
 #include "trabalho1/FuncoesMatematicas.h"
 #include "trabalho1/TArvoreSintatica.h"
-#include "trabalho1/TCalculoOscilacoesSismicas.h"
+#include "trabalho1/TImpressoraCalculoOscilacoesSismicas.h"
 #include "trabalho1/TParser.h"
+
+// ------------------------------------------------------------------------------------------------
 
 TEST(trabalho1_test, deve_ser_capaz_calcular_arvore)
 {
@@ -102,6 +105,8 @@ TEST(trabalho1_test, deve_ser_capaz_calcular_arvore)
     }
 }
 
+// ------------------------------------------------------------------------------------------------
+
 TEST(trabalho1_test, deve_ser_capaz_de_parsear_expressao_valida)
 {
     TParser parser;
@@ -159,6 +164,8 @@ TEST(trabalho1_test, deve_ser_capaz_de_parsear_expressao_valida)
     EXPECT_TRUE(parser.Parse("f(x) = ())))") == nullptr);
     EXPECT_TRUE(parser.Parse("f(x) = (((()") == nullptr);
 }
+
+// ------------------------------------------------------------------------------------------------
 
 TEST(trabalho1_test, deve_ser_capaz_de_calcular_expressoes)
 {
@@ -235,6 +242,8 @@ TEST(trabalho1_test, deve_ser_capaz_de_calcular_expressoes)
     EXPECT_NEAR(FuncoesMatematicas::Calcula("f(d) = 7e^d - 4d^2", 5.0), 938.89, erro);
 }
 
+// ------------------------------------------------------------------------------------------------
+
 TEST(trabalho1_test, deve_ser_capaz_de_gerar_strings_a_partir_de_modelo)
 {
     const std::string str1 = FuncoesGerais::InstanciaModelo("Foo");
@@ -250,12 +259,31 @@ TEST(trabalho1_test, deve_ser_capaz_de_gerar_strings_a_partir_de_modelo)
     EXPECT_STREQ(str5.c_str(), "Foo Bar Baz");
 }
 
-#include <iostream>
+// ------------------------------------------------------------------------------------------------
+
 TEST(trabalho1_test, deve_ser_capaz_de_calcular_oscilacoes_de_ondas_sismicas)
 {
-    const double erro = 0.1;
+    using namespace CalculoOscilacoesSismicas;
 
-    TCalculoOscilacoesSismicas calculoOscilacoesSismicas;
+    const double erro = 0.000001;
 
-    std::cout << calculoOscilacoesSismicas.Sintetiza();
+    const TEntradaCalculo entradaPadrao { 1.0, 0.5, 0.0001 };
+    EXPECT_NEAR(Calcula(EMetodoCalculo::NEWTON_RAPHSON, entradaPadrao), 0.477507, erro);
+    EXPECT_NEAR(Calcula(EMetodoCalculo::NEWTON_MODIFICADO, entradaPadrao), 0.477548, erro);
+    EXPECT_NEAR(Calcula(EMetodoCalculo::SECANTE, entradaPadrao), 0.477509, erro);
 }
+
+// ------------------------------------------------------------------------------------------------
+
+#include <iostream>
+TEST(trabalho1_test, deve_ser_capaz_de_imprimir_resultados)
+{
+    TImpressoraCalculoOscilacoesSismicas impressora;
+    impressora.Adiciona(1.0, 0.5, 0.0001);
+    impressora.Adiciona(2.0, 1.2, 0.0001);
+    impressora.Adiciona(3.0, 0.5, 0.0001);
+
+    std::cout << impressora.Sintetiza();
+}
+
+// ------------------------------------------------------------------------------------------------
