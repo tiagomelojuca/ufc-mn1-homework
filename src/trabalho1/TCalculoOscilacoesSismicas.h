@@ -28,20 +28,33 @@ public:
 
     TCalculoOscilacoesSismicas() = default;
 
-    std::string Sintetiza(TEntradaCalculo e) const
+    std::string Sintetiza(TEntradaCalculo entrada) const
     {
         std::stringstream ss;
 
-        const double dNR = Calcula(EMetodoCalculo::NEWTON_RAPHSON, e);
-        const double dNM = Calcula(EMetodoCalculo::NEWTON_MODIFICADO, e);
-        const double dSc = Calcula(EMetodoCalculo::SECANTE, e);
+        const double dNR = Calcula(EMetodoCalculo::NEWTON_RAPHSON, entrada);
+        const double dNM = Calcula(EMetodoCalculo::NEWTON_MODIFICADO, entrada);
+        const double dSc = Calcula(EMetodoCalculo::SECANTE, entrada);
 
-        ss << "> " << GeraExpressaoDinamicamente(e.a) << std::endl
+        ss << "> " << GeraExpressaoDinamicamente(entrada.a) << std::endl
            << "    NEWTON-RAPHSON    : " << dNR << std::endl
            << "    NEWTON-MODIFICADO : " << dNM << std::endl
            << "    SECANTE           : " << dSc << std::endl;
 
         return ss.str();
+    }
+
+    std::string Sintetiza(const std::vector<TEntradaCalculo>& entradas) const
+    {
+        TTabela t { entradas.size() + 1, 7u, 8u };
+        PreencheCabecalho(t);
+
+        for (size_t i = 2; i <= entradas.size() + 1; i++)
+        {
+            PreencheLinha(t, i, entradas[i - 2]);
+        }
+
+        return t.Gera();
     }
 
     std::string Sintetiza() const
@@ -51,35 +64,7 @@ public:
         entradas.push_back({ 2.0, 1.2, 0.0001 });
         entradas.push_back({ 3.0, 0.5, 0.0001 });
 
-        TTabela t { entradas.size() + 1, 7u, 8u };
-        t.DefineCabecalho(1);
-
-        t.Define(1, 1, "a");
-        t.Define(1, 2, "d0");
-        t.Define(1, 3, "d1");
-        t.Define(1, 4, "err");
-        t.Define(1, 5, "d_nr");
-        t.Define(1, 6, "d_nm");
-        t.Define(1, 7, "d_sc");
-
-        for (size_t i = 2; i <= entradas.size() + 1; i++)
-        {
-            const TEntradaCalculo& e = entradas[i - 2];
-
-            const double dNR = Calcula(EMetodoCalculo::NEWTON_RAPHSON, e);
-            const double dNM = Calcula(EMetodoCalculo::NEWTON_MODIFICADO, e);
-            const double dSc = Calcula(EMetodoCalculo::SECANTE, e);
-
-            t.Define(i, 1, e.a);
-            t.Define(i, 2, e.x0);
-            t.Define(i, 3, EstimaX1(e.x0));
-            t.Define(i, 4, e.err);
-            t.Define(i, 5, dNR);
-            t.Define(i, 6, dNM);
-            t.Define(i, 7, dSc);
-        }
-
-        return t.Gera();
+        return Sintetiza(entradas);
     }
 
 private:
@@ -144,6 +129,29 @@ private:
     double EstimaX1(double x0, double delta = 0.1) const
     {
         return x0 + delta;
+    }
+
+    void PreencheCabecalho(TTabela& t) const
+    {
+        t.DefineCabecalho(1);
+        t.Define(1, 1, "a");
+        t.Define(1, 2, "d0");
+        t.Define(1, 3, "d1");
+        t.Define(1, 4, "err");
+        t.Define(1, 5, "d_nr");
+        t.Define(1, 6, "d_nm");
+        t.Define(1, 7, "d_sc");
+    }
+
+    void PreencheLinha(TTabela& t, size_t l, const TEntradaCalculo& e) const
+    {
+        t.Define(l, 1, e.a);
+        t.Define(l, 2, e.x0);
+        t.Define(l, 3, EstimaX1(e.x0));
+        t.Define(l, 4, e.err);
+        t.Define(l, 5, Calcula(EMetodoCalculo::NEWTON_RAPHSON, e));
+        t.Define(l, 6, Calcula(EMetodoCalculo::NEWTON_MODIFICADO, e));
+        t.Define(l, 7, Calcula(EMetodoCalculo::SECANTE, e));
     }
 
     static constexpr const char* modeloFuncaoOriginal = "f(d) = $*e^d - 4*d^2";
