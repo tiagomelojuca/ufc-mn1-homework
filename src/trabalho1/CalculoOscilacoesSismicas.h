@@ -77,7 +77,23 @@ namespace CalculoOscilacoesSismicas
 
     double EstimaX0(double a)
     {
-        return BentoTechniques::EstimaX0(GeraExpressaoDinamicamente(a), 0.0, 0.25, 6u);
+        // Os valores "magicos" abaixo vieram do estudo do grafico da funcao
+        // Gerar abscissas entre [-5.0, +5.0] eh uma estrategia balanceada,
+        // pois o custo eh relativamente baixo e funciona mesmo para valores
+        // bastante de grandes de "a", uma vez que o estudo da familia de
+        // graficos nos mostra que as raizes crescem lentamente conforme
+        // o coeficiente a explode
+        const std::vector<double> aproximacoes = BentoTechniques::BuscaAproximacoesIniciais(
+            GeraExpressaoDinamicamente(a), 0.0, 0.25, 20u
+        );
+
+        // Por analogia com a entrada padrao sugerida no enunciado, usamos
+        // a raiz do meio sempre que possivel
+        const size_t lower = 0u;
+        const size_t upper = aproximacoes.size() - 1;
+        const size_t midle = (lower + upper) / 2;
+
+        return aproximacoes[midle];
     }
 
     double EstimaX1(double x0, double delta = 0.1)

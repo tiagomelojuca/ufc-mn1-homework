@@ -5,15 +5,15 @@
 #include <vector>
 
 #include "TFuncao.h"
-#include "FuncoesMatematicas.h"
 
 // ------------------------------------------------------------------------------------------------
 
 namespace BentoTechniques
 {
-    double EstimaX0(const std::string& expr, double centro, double delta, size_t saltos)
+    std::vector<double>
+    BuscaAproximacoesIniciais(const std::string& expr, double centro, double delta, size_t saltos)
     {
-        double x0 = FuncoesMatematicas::Sentinela();
+        std::vector<double> aproximacoes;
 
         delta = fabs(delta);
 
@@ -37,12 +37,12 @@ namespace BentoTechniques
             {
                 if (Sinal(f(abscissas[i])) != Sinal(f(abscissas[i + 1])))
                 {
-                    x0 = 0.5 * (abscissas[i] + abscissas[i + 1]);
+                    aproximacoes.push_back(0.5 * (abscissas[i] + abscissas[i + 1]));
                 }
             }
         }
 
-        return x0;
+        return aproximacoes;
     }
 }
 
