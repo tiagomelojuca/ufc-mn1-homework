@@ -2,6 +2,7 @@
 
 #include <sstream>
 
+#include "trabalho1/BentoTechniques.h"
 #include "trabalho1/CalculoOscilacoesSismicas.h"
 #include "trabalho1/FuncoesGerais.h"
 #include "trabalho1/FuncoesMatematicas.h"
@@ -277,7 +278,6 @@ TEST(trabalho1_test, deve_ser_capaz_de_calcular_oscilacoes_de_ondas_sismicas)
 
 // ------------------------------------------------------------------------------------------------
 
-#include <iostream>
 TEST(trabalho1_test, deve_ser_capaz_de_imprimir_resultados)
 {
     TImpressoraCalculoOscilacoesSismicas impressora;
@@ -305,6 +305,16 @@ TEST(trabalho1_test, deve_ser_capaz_de_imprimir_resultados)
     const std::string quadroResumoEsperado = ss.str();
 
     EXPECT_STREQ(impressora.Sintetiza().c_str(), quadroResumoEsperado.c_str());
+}
+
+// ------------------------------------------------------------------------------------------------
+
+TEST(trabalho1_test, deve_ser_capaz_de_estimar_x0)
+{
+    const double erro = 0.0001;
+    EXPECT_NEAR(CalculoOscilacoesSismicas::EstimaX0(1.0),  0.375, erro);
+    EXPECT_NEAR(CalculoOscilacoesSismicas::EstimaX0(2.0),  1.375, erro);
+    EXPECT_NEAR(CalculoOscilacoesSismicas::EstimaX0(3.0), -0.625, erro);
 }
 
 // ------------------------------------------------------------------------------------------------

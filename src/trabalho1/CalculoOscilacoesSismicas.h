@@ -5,6 +5,7 @@
 #include <sstream>
 #include <memory>
 
+#include "BentoTechniques.h"
 #include "FuncoesGerais.h"
 #include "TCalculoRaizesNewtonRaphson.h"
 #include "TCalculoRaizesNewtonModificado.h"
@@ -72,6 +73,11 @@ namespace CalculoOscilacoesSismicas
         const std::string f_ = GeraDerivadaDinamicamente(a);
 
         return FabricaCalculo(metodo, f, f_, x0, x1, errAdm)->Busca();
+    }
+
+    double EstimaX0(double a)
+    {
+        return BentoTechniques::EstimaX0(GeraExpressaoDinamicamente(a), 0.0, 0.25, 6u);
     }
 
     double EstimaX1(double x0, double delta = 0.1)
