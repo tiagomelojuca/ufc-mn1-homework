@@ -1,6 +1,8 @@
 #ifndef TARVORESINTATICA_H_
 #define TARVORESINTATICA_H_
 
+#include <functional>
+
 #include "TNoh.h"
 
 // ------------------------------------------------------------------------------------------------
