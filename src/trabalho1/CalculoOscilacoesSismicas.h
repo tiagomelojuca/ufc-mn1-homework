@@ -7,6 +7,7 @@
 
 #include "BentoTechniques.h"
 #include "FuncoesGerais.h"
+#include "FuncoesMatematicas.h"
 #include "TCalculoRaizesNewtonRaphson.h"
 #include "TCalculoRaizesNewtonModificado.h"
 #include "TCalculoRaizesSecante.h"
@@ -86,6 +87,11 @@ namespace CalculoOscilacoesSismicas
         const std::vector<double> aproximacoes = BentoTechniques::BuscaAproximacoesIniciais(
             GeraExpressaoDinamicamente(a), 0.0, 0.25, 20u
         );
+
+        if (aproximacoes.empty())
+        {
+            return FuncoesMatematicas::Sentinela();
+        }
 
         // Por analogia com a entrada padrao sugerida no enunciado, usamos
         // a raiz do meio sempre que possivel
