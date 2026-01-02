@@ -10,6 +10,18 @@
 class TMatriz
 {
 public:
+    static TMatriz Identidade(uint8_t ordem)
+    {
+        TMatriz m(ordem, ordem);
+
+        for (uint8_t i = 0; i < ordem; i++)
+        {
+            m._matrizCrua[i][i] = 1.0;
+        }
+
+        return m;
+    }
+
     TMatriz() = delete;
 
     TMatriz(const TMatriz& outra)
@@ -144,7 +156,8 @@ public:
         {
             for (int c = 1; c <= _colunas; c++)
             {
-                if (fabs(Valor(l, c) - outra.Valor(l, c)) > tol)
+                const double diff = Valor(l, c) - outra.Valor(l, c);
+                if (fabs(diff) > tol)
                 {
                     return false;
                 }
