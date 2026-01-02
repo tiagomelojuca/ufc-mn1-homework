@@ -14,11 +14,7 @@ public:
     TSistema(const TSistema&) = delete;
     TSistema(TSistema&&) = delete;
 
-    TSistema(const TMatriz& A, const TMatriz& b)
-        : _A(0, 0), _b(0, 0)
-    {
-        // ToDo
-    }
+    TSistema(const TMatriz& A, const TMatriz& b) : _A(A), _b(b) {}
 
     TMatriz Resolve(EMetodo m) const
     {
@@ -30,11 +26,13 @@ public:
 private:
     TMatriz ResolvePorGaussJacobi() const
     {
+        // ToDo
         return TMatriz(0u, 0u);
     }
 
     TMatriz ResolvePorGaussSeidel() const
     {
+        // ToDo
         return TMatriz(0u, 0u);
     }
 
