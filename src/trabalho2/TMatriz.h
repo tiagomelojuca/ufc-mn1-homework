@@ -173,6 +173,39 @@ public:
         return TMatriz(0, 0);
     }
 
+    TMatriz Produto(const TMatriz& outra) const
+    {
+        const TMatriz& A = *this;
+        const TMatriz& B = outra;
+
+        // Amxn * Bpxq existe <=> n = p
+        const uint8_t m = A._linhas;
+        const uint8_t n = A._colunas;
+        const uint8_t p = B._linhas;
+        const uint8_t q = B._colunas;
+        if (n != p)
+        {
+            return TMatriz(0, 0);
+        }
+
+        // Amxn * Bpxq = Cmxq
+        TMatriz C(m, q);
+        for (uint8_t l = 0; l < m; l++)
+        {
+            for (uint8_t c = 0; c < q; c++)
+            {
+                double c_lc = 0.0;
+                for (uint8_t i = 0; i < n; i++)
+                {
+                    c_lc += A._matrizCrua[l][i] * B._matrizCrua[i][c];
+                }
+                C._matrizCrua[l][c] = c_lc;
+            }
+        }
+
+        return C;
+    }
+
 private:
     // impl consagrada, so pra usar como referencia da minha
     TMatriz InversaPorEliminacaoGaussJordanComPivoteamentoParcial() const
