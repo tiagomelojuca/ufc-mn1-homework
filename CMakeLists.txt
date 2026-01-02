@@ -21,4 +21,11 @@ add_executable(
     trabalho1
     src/trabalho1/main.cpp
 )
+
+add_executable(
+    trabalho2
+    src/trabalho2/main.cpp
+)
+
 install(TARGETS trabalho1 RUNTIME DESTINATION ".")
+install(TARGETS trabalho2 RUNTIME DESTINATION ".")

@@ -11,6 +11,7 @@ add_subdirectory(
 add_executable(
     suite_teste_unitario
     "trabalho1_test.cpp"
+    "trabalho2_test.cpp"
 )
 
 target_link_libraries(suite_teste_unitario gtest_main)
