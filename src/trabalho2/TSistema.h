@@ -25,9 +25,45 @@ public:
             : ResolvePorGaussSeidel(errAdm);
     }
 
-    static TMatriz Inversa(const TMatriz& M, EMetodo m)
+    static TMatriz Inversa(const TMatriz& A, EMetodo m, double errAdm)
     {
-        return TMatriz(0, 0);
+        const uint8_t n = A.Linhas();
+        if (A.Colunas() != n)
+        {
+            return TMatriz(0, 0);
+        }
+
+        // Conforme diz o enunciado, se A eh uma matriz nxn que possui como inversa
+        // uma matriz A^(-1) entao A*A^(-1) = I, onde I eh a matriz identidade, e uma
+        // maneira de se achar A^(-1) eh achar-se as colunas de A^(-1) uma por vez:
+        // A*A^(-1)_1 = { 1 0 ... 0 }t
+        // A*A^(-1)_2 = { 0 1 ... 0 }t
+        // A*A^(-1)_n = { 0 0 ... 1 }t
+        // Onde A^(-1)_i eh a i-esima coluna de A
+        // Como A e I sao conhecidos, isso consiste basicamente em determinar A^(-1)_i,
+        // ou seja, resolver um sistema no qual x = A^(-1)_i e b = I
+        const TMatriz I = TMatriz::Identidade(n);
+
+        TMatriz invA { n, n };
+
+        for (uint8_t col = 1; col <= n; col++)
+        {
+            TMatriz b { n, 1 }; // coluna correspondente de I
+            for (uint8_t lin = 1; lin <= n; lin++)
+            {
+                b.Valor(lin, 1, I.Valor(lin, col));
+            }
+
+            TSistema sis { A, b };
+            const TMatriz x = sis.Resolve(m, errAdm); // A^(-1)_col
+
+            for (uint8_t lin = 1; lin <= n; lin++)
+            {
+                invA.Valor(lin, col, x.Valor(lin, 1));
+            }
+        }
+
+        return invA;
     }
 
 private:
