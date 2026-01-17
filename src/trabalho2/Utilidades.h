@@ -10,7 +10,7 @@
 
 namespace Utilidades
 {
-    void Imprime(const TMatriz& m)
+    std::string ToString(const TMatriz& m)
     {
         std::string _m;
 
@@ -24,7 +24,12 @@ namespace Utilidades
             _m += "\n";
         }
 
-        std::cout << _m;
+        return _m;
+    }
+
+    void Imprime(const TMatriz& m)
+    {
+        std::cout << ToString(m);
     }
 }
 
