@@ -298,7 +298,40 @@ public:
         return C;
     }
 
+    bool EhDiagonalEstritamenteDominante() const
+    {
+        return AtendeCriterioDasLinhas();
+    }
+
 private:
+    bool AtendeCriterioDasLinhas() const
+    {
+        for (uint8_t linha = 0; linha < _linhas; linha++)
+        {
+            double somatorioLinha = 0.0;
+            for (uint8_t coluna = 0; coluna < _colunas; coluna++)
+            {
+                somatorioLinha += _matrizCrua[linha][coluna];
+            }
+
+            const double elNaDiagonal = _matrizCrua[linha][linha];
+            const double somatorioElementosForaDaDiagonal = somatorioLinha - elNaDiagonal;
+            const bool linhaAtendeAoCriterio = elNaDiagonal > somatorioElementosForaDaDiagonal;
+
+            if (!linhaAtendeAoCriterio)
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+    bool AtendeCriterioDeSassenfeld() const
+    {
+        // ToDo
+        return false;
+    }
+
     void LimpaMem()
     {
         for (uint8_t linha = 0; linha < _linhas; linha++)

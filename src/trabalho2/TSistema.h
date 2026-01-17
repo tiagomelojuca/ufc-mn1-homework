@@ -33,8 +33,18 @@ public:
 
     static TMatriz Inversa(const TMatriz& A, EMetodo m, double errAdm)
     {
+        // Se a matriz atende ao criterio das linhas, ou ao criterio de Sassenfeld,
+        // entao eh certo que ela eh nao singular, de forma que a matriz inversa existe
+        // No entanto, eh possivel que a matriz seja inversivel, mas nao atenda aos
+        // criterios abaixo. Portanto, atender a qualquer um dos criterios supracitados
+        // eh condicao suficiente, mas nao necessaria, para que a matriz seja inversivel
+        // Contudo, como o enunciado pede explicitamente que a inversa seja encontrado
+        // por resolucao do sistema A*A^(-1) = I com Gauss/Jacobi ou Gauss/Seidel,
+        // precisamos assegurar a convergencia aqui. De outra forma, sinalizamos que nao
+        // foi possivel calcular, mesmo que a inversa possa existir e ser calculada por
+        // algum outro metodo (como Gauss/Jordan, por exemplo)
         const uint8_t n = A.Linhas();
-        if (A.Colunas() != n)
+        if (A.Colunas() != n || !A.EhDiagonalEstritamenteDominante())
         {
             return TMatriz(0, 0);
         }
