@@ -62,8 +62,84 @@ private:
 
     TMatriz ResolvePorGaussSeidel(double errAdm) const
     {
-        // ToDo
-        return TMatriz(0u, 0u);
+        const uint8_t n = _A.Linhas();
+        TMatriz D { n, n }; // elementos da diagonal da matriz dos coeficientes
+        TMatriz E { n, n }; // particao triangular inferior matriz dos coeficientes
+        TMatriz F { n, n }; // particao triangular superior matriz dos coeficientes
+        for (int l = 1; l <= n; l++)
+        {
+            for (int c = 1; c <= n; c++)
+            {
+                const double a_lc = _A.Valor(l, c);
+                if (l == c)
+                {
+                    D.Valor(l, c, a_lc);
+                }
+                else if (l > c)
+                {
+                    E.Valor(l, c, a_lc);
+                }
+                else
+                {
+                    F.Valor(l, c, a_lc);
+                }
+            }
+        }
+
+        // A inversa de uma matriz diagonal eh trivial de calcular
+        TMatriz Dinv { n, n };
+        for (uint8_t i = 1; i <= n; i++)
+        {
+            Dinv.Valor(i, i, 1.0 / D.Valor(i, i));
+        }
+
+        TMatriz C = Dinv.Produto(E).Produto(-1.0);
+        TMatriz Cant = Dinv.Produto(F).Produto(-1.0);
+        TMatriz g = Dinv.Produto(_b);
+
+        TMatriz x0 = _b;
+        for (int l = 1; l <= g.Linhas(); l++)
+        {
+            double x0_l1 = x0.Valor(l, 1) / _A.Valor(l, l);
+            x0.Valor(l, 1, x0_l1);
+        }
+
+        uint8_t iter = 0u;
+        double err = std::numeric_limits<double>::max();
+        TMatriz xAnt { g.Linhas(), g.Colunas() };
+        TMatriz x = x0;
+        while (err > errAdm && iter < _maxIter)
+        {
+            xAnt = x;
+
+            // x = C.Produto(x) + Cant(xAnt) + g,
+            // mas nao tem como fazer essa operacao atomicamente
+            for (uint8_t l = 1; l <= n; l++)
+            {
+                double parcelaC = 0.0;
+                for (int c = 1; c < l; c++)
+                {
+                    parcelaC += C.Valor(l, c) * x.Valor(c, 1);
+                }
+
+                double parcelaCant = 0.0;
+                for (int c = l + 1; c <= n; c++)
+                {
+                    parcelaCant += Cant.Valor(l, c) * xAnt.Valor(c, 1);
+                }
+
+                const double parcelaG = g.Valor(l, 1);
+
+                const double x_l1 = parcelaC + parcelaCant + parcelaG;
+
+                x.Valor(l, 1, x_l1);
+            }
+
+            err = Erro(x, xAnt);
+            iter++;
+        }
+
+        return x;
     }
 
     double Erro(const TMatriz& x, const TMatriz& xAnt) const
