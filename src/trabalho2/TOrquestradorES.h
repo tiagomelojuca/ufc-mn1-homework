@@ -30,7 +30,14 @@ public:
 
     static void Imprime(const TDadosSaida& dadosSaida)
     {
-        ImprimeResultados(dadosSaida.invA, dadosSaida.solSis);
+        if (dadosSaida.invA.Inconsistente())
+        {
+            ImprimeErro();
+        }
+        else
+        {
+            ImprimeResultados(dadosSaida.invA, dadosSaida.solSis);
+        }
     }
 
 private:
@@ -112,6 +119,13 @@ private:
         std::cout << "------------------------------------------------------------\n";
         std::cout << "[AVISO] Calculando resultados, isso pode demorar um pouco...\n";
         std::cout << "------------------------------------------------------------\n";
+    }
+
+    static void ImprimeErro()
+    {
+        std::cout << "[ERRO] Nao foi possivel calcular a inversa da matriz de coeficientes!\n";
+        std::cout << "       Verifique se a matriz informada eh diagonalmente dominante,\n";
+        std::cout << "       pois garante a convergencia dos metodos e a existencia da inversa";
     }
 
     static void ImprimeResultados(const TMatriz& invA, const TMatriz& x)
