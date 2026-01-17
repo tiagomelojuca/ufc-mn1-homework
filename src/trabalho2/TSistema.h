@@ -25,6 +25,11 @@ public:
             : ResolvePorGaussSeidel(errAdm);
     }
 
+    static TMatriz Inversa(const TMatriz& M, EMetodo m)
+    {
+        return TMatriz(0, 0);
+    }
+
 private:
     TMatriz ResolvePorGaussJacobi(double errAdm) const
     {

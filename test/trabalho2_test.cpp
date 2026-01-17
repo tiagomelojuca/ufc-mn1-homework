@@ -18,6 +18,10 @@ TEST(trabalho2_test, deve_ser_capaz_de_calcular_inversa)
                                        { -1.0/2.0, -1.0/2.0,  1.0 } });
 
     EXPECT_TRUE(A.Inversa().Igual(inversaEsperadaA, tol));
+    EXPECT_TRUE(TSistema::Inversa(A, TSistema::EMetodo::GAUSS_JACOBI).Igual(inversaEsperadaA, tol));
+    EXPECT_TRUE(TSistema::Inversa(A, TSistema::EMetodo::GAUSS_SEIDEL).Igual(inversaEsperadaA, tol));
+    EXPECT_TRUE(TSistema::Inversa(A, TSistema::EMetodo::GAUSS_JACOBI).Igual(A.Inversa(), tol));
+    EXPECT_TRUE(TSistema::Inversa(A, TSistema::EMetodo::GAUSS_SEIDEL).Igual(A.Inversa(), tol));
 }
 
 // ------------------------------------------------------------------------------------------------

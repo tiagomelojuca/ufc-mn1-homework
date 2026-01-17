@@ -173,8 +173,60 @@ public:
 
     TMatriz Inversa() const
     {
-        // ToDo
-        return TMatriz(0, 0);
+        // impl consagrada, so pra usar como referencia da minha
+        // faz por eliminacao de gauss jordan com pivoteamento parcial
+
+        if (_linhas != _colunas || Inconsistente())
+        {
+            return TMatriz(0, 0);
+        }
+
+        uint8_t n = _linhas;
+
+        TMatriz aux = *this;
+        TMatriz inv = Identidade(n);
+
+        for (uint8_t i = 0; i < n; i++)
+        {
+            uint8_t linhaPivo = i;
+            for (uint8_t k = i + 1; k < n; k++)
+            {
+                if (std::abs(aux._matrizCrua[k][i]) > std::abs(aux._matrizCrua[linhaPivo][i]))
+                {
+                    linhaPivo = k;
+                }
+            }
+
+            std::swap(aux._matrizCrua[i], aux._matrizCrua[linhaPivo]);
+            std::swap(inv._matrizCrua[i], inv._matrizCrua[linhaPivo]);
+
+            if (std::abs(aux._matrizCrua[i][i]) < 1e-15)
+            {
+                return TMatriz(0, 0);
+            }
+
+            double pivoValor = aux._matrizCrua[i][i];
+            for (uint8_t j = 0; j < n; j++)
+            {
+                aux._matrizCrua[i][j] /= pivoValor;
+                inv._matrizCrua[i][j] /= pivoValor;
+            }
+
+            for (uint8_t k = 0; k < n; k++)
+            {
+                if (k != i)
+                {
+                    double fator = aux._matrizCrua[k][i];
+                    for (uint8_t j = 0; j < n; j++)
+                    {
+                        aux._matrizCrua[k][j] -= fator * aux._matrizCrua[i][j];
+                        inv._matrizCrua[k][j] -= fator * inv._matrizCrua[i][j];
+                    }
+                }
+            }
+        }
+
+        return inv;
     }
 
     TMatriz Soma(const TMatriz& outra) const
@@ -247,62 +299,6 @@ public:
     }
 
 private:
-    // impl consagrada, so pra usar como referencia da minha
-    TMatriz InversaPorEliminacaoGaussJordanComPivoteamentoParcial() const
-    {
-        if (_linhas != _colunas || Inconsistente())
-        {
-            return TMatriz(0, 0);
-        }
-
-        uint8_t n = _linhas;
-
-        TMatriz aux = *this;
-        TMatriz inv = Identidade(n);
-
-        for (uint8_t i = 0; i < n; i++)
-        {
-            uint8_t linhaPivo = i;
-            for (uint8_t k = i + 1; k < n; k++)
-            {
-                if (std::abs(aux._matrizCrua[k][i]) > std::abs(aux._matrizCrua[linhaPivo][i]))
-                {
-                    linhaPivo = k;
-                }
-            }
-
-            std::swap(aux._matrizCrua[i], aux._matrizCrua[linhaPivo]);
-            std::swap(inv._matrizCrua[i], inv._matrizCrua[linhaPivo]);
-
-            if (std::abs(aux._matrizCrua[i][i]) < 1e-15)
-            {
-                return TMatriz(0, 0);
-            }
-
-            double pivoValor = aux._matrizCrua[i][i];
-            for (uint8_t j = 0; j < n; j++)
-            {
-                aux._matrizCrua[i][j] /= pivoValor;
-                inv._matrizCrua[i][j] /= pivoValor;
-            }
-
-            for (uint8_t k = 0; k < n; k++)
-            {
-                if (k != i)
-                {
-                    double fator = aux._matrizCrua[k][i];
-                    for (uint8_t j = 0; j < n; j++)
-                    {
-                        aux._matrizCrua[k][j] -= fator * aux._matrizCrua[i][j];
-                        inv._matrizCrua[k][j] -= fator * inv._matrizCrua[i][j];
-                    }
-                }
-            }
-        }
-
-        return inv;
-    }
-
     void LimpaMem()
     {
         for (uint8_t linha = 0; linha < _linhas; linha++)
