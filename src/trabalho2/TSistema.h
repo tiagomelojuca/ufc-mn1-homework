@@ -18,6 +18,15 @@ public:
 
     TSistema(const TMatriz& A, const TMatriz& b) : _A(A), _b(b) {}
 
+    const TMatriz& MatrizCoeficientes() const
+    {
+        return _A;
+    }
+    const TMatriz& VetorTermosIndependentes() const
+    {
+        return _b;
+    }
+
     TMatriz Resolve(EMetodo m, double errAdm) const
     {
         return m == EMetodo::GAUSS_JACOBI
