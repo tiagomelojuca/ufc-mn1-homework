@@ -139,6 +139,10 @@ public:
     {
         return _matrizCrua[l - 1][c - 1];
     }
+    void Valor(uint8_t l, uint8_t c, double v)
+    {
+        _matrizCrua[l - 1][c - 1] = v;
+    }
 
     bool Inconsistente() const
     {
@@ -171,6 +175,42 @@ public:
     {
         // ToDo
         return TMatriz(0, 0);
+    }
+
+    TMatriz Soma(const TMatriz& outra) const
+    {
+        const TMatriz& A = *this;
+        const TMatriz& B = outra;
+        if (A._linhas != B._linhas || A._colunas != B._colunas)
+        {
+            return TMatriz(0, 0);
+        }
+
+        TMatriz C(A._linhas, A._colunas);
+        for (uint8_t l = 0; l < A._linhas; l++)
+        {
+            for (uint8_t c = 0; c < A._colunas; c++)
+            {
+                C._matrizCrua[l][c] = A._matrizCrua[l][c] + B._matrizCrua[l][c];
+            }
+        }
+
+        return C;
+    }
+
+    TMatriz Produto(double k) const
+    {
+        TMatriz M = *this;
+
+        for (uint8_t l = 0; l < M._linhas; l++)
+        {
+            for (uint8_t c = 0; c < M._colunas; c++)
+            {
+                M._matrizCrua[l][c] *= k;
+            }
+        }
+
+        return M;
     }
 
     TMatriz Produto(const TMatriz& outra) const
