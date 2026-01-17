@@ -53,7 +53,7 @@ private:
         {
             xAnt = x;
             x = C.Produto(x).Soma(g);
-            err = ArgMax(x.Soma(xAnt.Produto(-1.0))) / ArgMax(x);
+            err = Erro(x, xAnt);
             iter++;
         }
 
@@ -64,6 +64,14 @@ private:
     {
         // ToDo
         return TMatriz(0u, 0u);
+    }
+
+    double Erro(const TMatriz& x, const TMatriz& xAnt) const
+    {
+        const TMatriz diff = x.Soma(xAnt.Produto(-1.0));
+        const double d = ArgMax(diff); // distancia, norma infinita
+
+        return d / ArgMax(x);
     }
 
     double ArgMax(const TMatriz& M) const
