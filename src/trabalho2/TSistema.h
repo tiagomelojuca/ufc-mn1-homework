@@ -13,9 +13,6 @@ public:
     enum class EMetodo { GAUSS_JACOBI, GAUSS_SEIDEL };
 
     TSistema() = delete;
-    TSistema(const TSistema&) = delete;
-    TSistema(TSistema&&) = delete;
-
     TSistema(const TMatriz& A, const TMatriz& b) : _A(A), _b(b) {}
 
     const TMatriz& MatrizCoeficientes() const
