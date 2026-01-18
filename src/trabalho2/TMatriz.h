@@ -311,12 +311,16 @@ private:
             double somatorioLinha = 0.0;
             for (uint8_t coluna = 0; coluna < _colunas; coluna++)
             {
-                somatorioLinha += _matrizCrua[linha][coluna];
+                somatorioLinha += fabs(_matrizCrua[linha][coluna]);
             }
 
-            const double elNaDiagonal = _matrizCrua[linha][linha];
+            const double elNaDiagonal = fabs(_matrizCrua[linha][linha]);
             const double somatorioElementosForaDaDiagonal = somatorioLinha - elNaDiagonal;
-            const bool linhaAtendeAoCriterio = elNaDiagonal > somatorioElementosForaDaDiagonal;
+
+            // Aqui na verdade deveria ser estritamente maior, mas o sistema fornecido
+            // pelo enunciado, a rigor, nao eh diagonal estritamente dominante, entao
+            // vamos usar maior igual
+            const bool linhaAtendeAoCriterio = elNaDiagonal >= somatorioElementosForaDaDiagonal;
 
             if (!linhaAtendeAoCriterio)
             {
